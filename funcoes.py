@@ -1,5 +1,6 @@
 import psycopg2
-
+def test():
+    print("ola")
 
 def connect_db():
     try:
