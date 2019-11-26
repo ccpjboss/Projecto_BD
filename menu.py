@@ -21,3 +21,8 @@ def menu_inicial():
         print("Registo: ")
         user_email = input("Insira o seu email: ")
         if user_email == NULL
+
+
+def menu_cliente():
+    print("ola")
+    print("ola")
