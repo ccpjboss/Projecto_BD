@@ -25,3 +25,4 @@ def menu_inicial():
 
 def menu_cliente():
     print("ola")
+    print("ola")
