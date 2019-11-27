@@ -1,12 +1,8 @@
 # Todas as funcoes que vão servir para pesquisar na base de dados devem ser implementadas aqui
 import psycopg2
 import psycopg2.extras
-# fgfgfgfgfgfgf
+
 # Coneção à base de dados basica
-
-#hhyyttioooiu
-
-#hhhhhhhh
 
 
 def connect_db():
@@ -73,18 +69,27 @@ def insere_novo_user(user_email, user_passwd, user_nome):
             print("PostgreSQL connection is closed")
 
 
-# def check_duplicates(input, coluna, tabela):
+def check_login(input_email, input_password):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
 
-    # connection = psycopg2.connect(user="postgres",
-            # password="postgres",
-            # host="localhost",
-            # port="5432",
-            # database="Projecto_BD")
-    #cursor = connection.cursor()
+        cursor = connection.cursor()
+        cursor.execute("SELECT email, password FROM utilizador WHERE email =%s AND password = %s;",
+                       (input_email, input_password))
+        count = cursor.rowcount
+        if count == 1:
+            return True
+        else:
+            return False
 
-    #cursor.execute("select %s from %s;", (coluna, tabela))
-    # for linha in cursor.fetchall():
-        #x = linha[0]
-        # print(x)
-
-#hfhfhfhhfhf
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()

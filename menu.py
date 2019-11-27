@@ -1,8 +1,4 @@
 # Todas as funcoes relacionadas com menus devem ser implementadas aqui
-#
-#
-# this is a change
-# stuff on the master branch
 
 import funcoes
 
@@ -23,7 +19,24 @@ def menu_inicial():
 
     if opcao == '1':
         print("Login: ")
-        print("Insira o seu e-mail: ")
+        while True:
+            email_input = input("E-mail: ")
+            if email_input == '' or ' ' in email_input:
+                print("Não insira um campo vazio...")
+            else:
+                break
+        while True:
+            passwd_input = input("Password: ")
+            if passwd_input == '':
+                print("Não insira um campo vazio...")
+            else:
+                break
+        if funcoes.check_login(email_input, passwd_input):
+            print("Login bem sucedido!", email_input)
+            # função para ir para o menu cliente
+        else:
+            print("Email e password não correspondem!")
+            menu_inicial()
 
     elif opcao == '2':
         print("Registo: ")
