@@ -1,5 +1,8 @@
+# Todas as funcoes que vão servir para pesquisar na base de dados devem ser implementadas aqui
 import psycopg2
 import psycopg2.extras
+
+# Coneção à base de dados basica
 
 
 def connect_db():
@@ -20,10 +23,13 @@ def connect_db():
         print("You are connected to - ", record, "\n")
 
     except (Exception, psycopg2.Error) as error:
+
         print("Error while connecting to PostgreSQL", error)
 
+# Insere novo utilizador na base de dados
 
-def novo_user(user_email, user_passwd, user_nome):
+
+def insere_novo_user(user_email, user_passwd, user_nome):
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -51,9 +57,10 @@ def novo_user(user_email, user_passwd, user_nome):
         # DEBUG
         print(count, "Record inserted successfully into clientes table")
 
-    except (Exception, psycopg2.Error) as error:
+    except (Exception, psycopg2.Error):
         if(connection):
-            print("Failed to insert record into mobile table", error)
+            print("Esse email já tem conta criada! Insira outro email.")
+
     finally:
         # closing database connection.
         if(connection):
