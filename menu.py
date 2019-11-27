@@ -1,4 +1,7 @@
 # Todas as funcoes relacionadas com menus devem ser implementadas aqui
+#
+#
+#
 import funcoes
 
 
