@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 
 
 def connect_db():
@@ -38,15 +39,16 @@ def novo_user(user_email, user_passwd, user_nome):
         cursor.execute(postgres_insert_query, record_to_insert)
         connection.commit()
         count = cursor.rowcount
+        # DEBUG
         print(count, "Record inserted successfully into utilizadores table")
 
-        # VER AQUI
         postgres_insert_query_2 = """ INSERT INTO cliente (utilizador_email) VALUES (%s)"""
         record_to_insert_2 = (user_email,)
 
         cursor.execute(postgres_insert_query_2, record_to_insert_2)
         connection.commit()
         count = cursor.rowcount
+        # DEBUG
         print(count, "Record inserted successfully into clientes table")
 
     except (Exception, psycopg2.Error) as error:
@@ -58,3 +60,18 @@ def novo_user(user_email, user_passwd, user_nome):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
+
+
+# def check_duplicates(input, coluna, tabela):
+
+    # connection = psycopg2.connect(user="postgres",
+            # password="postgres",
+            # host="localhost",
+            # port="5432",
+            # database="Projecto_BD")
+    #cursor = connection.cursor()
+
+    #cursor.execute("select %s from %s;", (coluna, tabela))
+    # for linha in cursor.fetchall():
+        #x = linha[0]
+        # print(x)

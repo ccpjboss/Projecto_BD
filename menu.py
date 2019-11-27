@@ -23,7 +23,10 @@ def menu_inicial():
         print("Registo: ")
         while True:
             user_email = input("Insira o email: ")
-            if user_email == '':
+            #table_name = 'utilizador'
+            #col_name = 'email'
+            #funcoes.check_duplicates(user_email, col_name, table_name)
+            if (user_email == '' or ' ' in user_email):
                 print("Não insira um campo vazio!")
             else:
                 break
@@ -39,7 +42,8 @@ def menu_inicial():
                 print("Não insira um campo vazio!")
             else:
                 break
-    funcoes.novo_user(user_email, user_password, user_nome)
+        funcoes.novo_user(user_email, user_password, user_nome)
+        menu_inicial()
 
 
 def menu_cliente():
