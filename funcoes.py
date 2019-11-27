@@ -1,7 +1,6 @@
 # Todas as funcoes que vão servir para pesquisar na base de dados devem ser implementadas aqui
 import psycopg2
 import psycopg2.extras
-# fgfgfgfgfgfgf
 # Coneção à base de dados basica
 
 #hhyyttioooiu
@@ -87,4 +86,4 @@ def insere_novo_user(user_email, user_passwd, user_nome):
         #x = linha[0]
         # print(x)
 
-#hfhfhfhhfhf
+
