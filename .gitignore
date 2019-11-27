@@ -2,3 +2,7 @@
 .idea/workspace.xml
 
 *.xml
+
+__pycache__/funcoes.cpython-37.pyc
+
+__pycache__/menu.cpython-37.pyc

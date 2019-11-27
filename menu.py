@@ -13,7 +13,7 @@ def menu_inicial():
     while True:
         opcao = input("Insira a opção: ")
         if opcao not in ['1', '2'] or opcao == '':
-            print("Insira um opção valida!")
+            print("Insira uma opção valida!")
         else:
             break
 
@@ -63,5 +63,23 @@ def menu_inicial():
 
 
 def menu_cliente():
-    print("ola")
-    print("ola")
+    print("********************************")
+    print("*********Menu Principal*********")
+    print("********************************")
+    print("1.\tListar todos os albuns")
+    print("2.\tCarrinho")
+    print("3.\tHistórico de compras")
+    print("4.\tMensagens")
+    print("5.\tPesquisar")
+
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2', '3', '4', '5'] or opcao == '':
+            print("Insira uma opção valida!")
+        else:
+            break
+    if opcao == '1':
+    elif opcao == '2':
+    elif opcao == '3':
+    elif opcao == '4':
+    elif opcao == '5':
