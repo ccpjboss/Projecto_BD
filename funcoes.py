@@ -3,7 +3,11 @@ import psycopg2
 import psycopg2.extras
 # fgfgfgfgfgfgf
 # Coneção à base de dados basica
+
 #hhyyttioooiu
+
+#hhhhhhhh
+
 
 def connect_db():
     try:
