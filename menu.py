@@ -12,7 +12,7 @@ def menu_inicial():
 
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2'] or opcao == '':
+        if opcao not in ['1', '2']:
             print("Insira uma opção valida!")
         else:
             break
