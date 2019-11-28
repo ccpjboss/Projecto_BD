@@ -79,7 +79,12 @@ def menu_cliente():
         else:
             break
     if opcao == '1':
+        print()
     elif opcao == '2':
+        print()
     elif opcao == '3':
+        print()
     elif opcao == '4':
+        print()
     elif opcao == '5':
+        print()
