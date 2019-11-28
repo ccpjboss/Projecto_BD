@@ -74,12 +74,17 @@ def menu_cliente():
 
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2', '3', '4', '5'] or opcao == '':
+        if opcao not in ['1', '2', '3', '4', '5']:
             print("Insira uma opção valida!")
         else:
             break
     if opcao == '1':
+        print()
     elif opcao == '2':
+        print()
     elif opcao == '3':
+        print()
     elif opcao == '4':
+        print()
     elif opcao == '5':
+        print()
