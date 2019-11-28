@@ -31,11 +31,14 @@ def menu_inicial():
                 print("Não insira um campo vazio...")
             else:
                 break
-        if funcoes.check_login(email_input, passwd_input):
+        if funcoes.check_login(email_input, passwd_input) == 'cliente':
             print("Login bem sucedido!", email_input)
             # função para ir para o menu cliente
-        else:
-            print("Email e password não correspondem!")
+        elif funcoes.check_login(email_input, passwd_input) == 'admin':
+            print("Admin ", email_input, " bem vindo!")
+            # funcao para ir para o menu_admin
+        elif funcoes.check_login(email_input, passwd_input) == 0:
+            print("Login invalido!")
             menu_inicial()
 
     elif opcao == '2':

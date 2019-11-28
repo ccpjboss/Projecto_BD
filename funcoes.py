@@ -78,13 +78,18 @@ def check_login(input_email, input_password):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        cursor.execute("SELECT email, password FROM utilizador WHERE email =%s AND password = %s;",
-                       (input_email, input_password))
-        count = cursor.rowcount
-        if count == 1:
-            return True
+        cursor.execute("SELECT utilizador.email, utilizador.password, cliente.utilizador_email FROM utilizador, cliente WHERE utilizador.email =%s AND utilizador.password = %s AND cliente.utilizador_email = %s;",
+                       (input_email, input_password, input_email))
+
+        if cursor.rowcount == 1:
+            return 'cliente'  # codigo para cliente_login
         else:
-            return False
+            cursor.execute("SELECT utilizador.email, utilizador.password, admin.utilizador_email FROM utilizador, admin WHERE utilizador.email =%s AND utilizador.password = %s AND admin.utilizador_email = %s;",
+                           (input_email, input_password, input_email))
+            if cursor.rowcount == 1:
+                return 'admin'  # codigo para admin_login
+            else:
+                return 0
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
