@@ -1,6 +1,7 @@
 # Todas as funcoes relacionadas com menus devem ser implementadas aqui
 
 import funcoes
+import getpass
 
 
 def menu_inicial():
@@ -26,7 +27,7 @@ def menu_inicial():
             else:
                 break
         while True:
-            passwd_input = input("Password: ")
+            passwd_input = getpass.getpass('Password:')
             if passwd_input == '':
                 print("Não insira um campo vazio...")
             else:
@@ -49,7 +50,7 @@ def menu_inicial():
             else:
                 break
         while True:
-            user_password = input("Insira a passwd: ")
+            user_password = getpass.getpass('Password:')
             if user_password == '':
                 print("Não insira um campo vazio!")
             else:
