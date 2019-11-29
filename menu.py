@@ -34,6 +34,7 @@ def menu_inicial():
                 break
         if funcoes.check_login(email_input, passwd_input) == 'cliente':
             print("Login bem sucedido!", email_input)
+            menu_cliente(email_input)
         elif funcoes.check_login(email_input, passwd_input) == 'admin':
             print("Admin ", email_input, " bem vindo!")
             menu_admin(email_input)
