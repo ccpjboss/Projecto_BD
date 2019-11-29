@@ -3,6 +3,7 @@ import psycopg2
 import psycopg2.extras
 
 # Coneção à base de dados basica
+import menu
 
 
 def connect_db():
@@ -89,3 +90,105 @@ def check_login(input_email, input_password):
         if(connection):
             cursor.close()
             connection.close()
+
+def listar_albuns():
+    global id_album, nome_album, artista
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, nome FROM album;" )
+
+        for linha in cursor.fetchall():
+            x1 = linha[0]
+            x2 = linha[1]
+            print("ID:\t",x1, "\tNome: ",x2)
+        menu.menu_detalhes()
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def detalhes_album():
+    global id_album, nome_album, artista
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, nome FROM album;")
+        album_id = []
+        for linha in cursor.fetchall():
+            album_id.append(str(linha[0]))
+        op1 = input("Insira o id do album: ")
+        if op1 not in album_id:
+            print("Insira uma opção válida!")
+        else:
+            cursor.execute("SELECT DISTINCT genero_id,artista_id, editora_id, musica_id "
+                           "FROM album, artista_album, genero_album, musica_album, editora "
+                           "WHERE genero_album.album_id = %s AND artista_album.album_id = %s"
+                           " AND album.id = %s AND musica_album.album_id = %s;", (op1, op1, op1, op1))
+            genero_id = 0
+            artista_id = 0
+            editora_id = 0
+            for linha in cursor.fetchall():
+                genero_id = linha[0]
+                artista_id = linha[1]
+                editora_id = linha[2]
+
+            cursor.execute("SELECT DISTINCT album.id, album.nome, preco, em_stock, n_stock, data_edicao, editora.nome, "
+                           "genero.nome, artista.nome, musica.nome "
+                           "FROM album, editora, genero, artista, musica "
+                           "WHERE album.id = %s AND editora.id = %s AND genero.id = %s AND artista.id = %s AND "
+                           "musica.id IN (SELECT DISTINCT musica_id FROM musica_album WHERE musica_album.album_id "
+                           "= %s);", (op1, editora_id, genero_id, artista_id, op1))
+
+            musica = []
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                nome_album = linha[1]
+                preco = linha[2]
+                stock = linha[3]
+                n_stock = linha[4]
+                data_edicao = linha[5]
+                editora = linha[6]
+                genero = linha[7]
+                artista = linha[8]
+                musica.append(linha[9])
+            print("ID: ", id_album)
+            print("Nome: ", nome_album)
+            print("Artista: ", artista)
+            for i, musicas in enumerate(musica, start=1):
+                print("Musica", i, ":", musicas)
+            print("Género:", genero)
+            print("Editora:", editora)
+            print("Data de Edição:", data_edicao)
+            print("Preço:", preco, "€")
+            if stock is True:
+                print("Exemplares em Stock:", n_stock)
+            else:
+                print("De momento este album não existe em stock")
+            menu.menu_cliente('lol')
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
+
+
+

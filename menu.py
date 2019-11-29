@@ -65,10 +65,11 @@ def menu_inicial():
         menu_inicial()
 
 
-def menu_cliente():
+def menu_cliente(user):
     print("********************************")
     print("*********Menu Principal*********")
     print("********************************")
+    print("Cliente:",user)
     print("1.\tListar todos os albuns")
     print("2.\tCarrinho")
     print("3.\tHistórico de compras")
@@ -82,7 +83,7 @@ def menu_cliente():
         else:
             break
     if opcao == '1':
-        print()
+        funcoes.listar_albuns()
     elif opcao == '2':
         print()
     elif opcao == '3':
@@ -120,3 +121,18 @@ def menu_admin(user):
     elif opcao == '6':
         print("Xau")
         exit()
+
+def menu_detalhes():
+    print()
+    print("1.\tVer detalhes de um album")
+    print("2.\tSair")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        funcoes.detalhes_album()
+    elif opcao == '2':
+        menu_cliente('lol')
