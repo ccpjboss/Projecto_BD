@@ -8,7 +8,7 @@ def menu_inicial():
     print("*Welcome to Vynil Records Store*")
     print("********************************")
     print("1.\tLogin")
-    print("2.\tNovo ultilizador/Registo")
+    print("2.\tNovo ultilizador")
 
     while True:
         opcao = input("Insira a opção: ")
@@ -33,10 +33,9 @@ def menu_inicial():
                 break
         if funcoes.check_login(email_input, passwd_input) == 'cliente':
             print("Login bem sucedido!", email_input)
-            # função para ir para o menu cliente
         elif funcoes.check_login(email_input, passwd_input) == 'admin':
             print("Admin ", email_input, " bem vindo!")
-            # funcao para ir para o menu_admin
+            menu_admin(email_input)
         elif funcoes.check_login(email_input, passwd_input) == 0:
             print("Login invalido!")
             menu_inicial()
@@ -91,3 +90,32 @@ def menu_cliente():
         print()
     elif opcao == '5':
         print()
+
+
+def menu_admin(user):
+    print("Admin: ", user)
+    print("1.\tAdicionar álbum.")
+    print("2.\tVisualizar álbuns em stock e quantidades.")
+    print("3.\tEnviar mensagens.")
+    print("4.\tAumentar saldo de um cliente.")
+    print("5.\tEstatistica da loja.")
+    print("6.\tSair.")
+    while True:
+        opcao = input("Insira uma opção: ")
+        if opcao not in ['1', '2', '3', '4', '5', '6']:
+            print("Insira uma opção valida!")
+        else:
+            break
+    if opcao == '1':
+        print()
+    elif opcao == '2':
+        print()
+    elif opcao == '3':
+        print()
+    elif opcao == '4':
+        print()
+    elif opcao == '5':
+        print()
+    elif opcao == '6':
+        print("Xau")
+        exit()
