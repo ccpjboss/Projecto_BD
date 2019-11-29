@@ -48,15 +48,6 @@ def insere_novo_user(user_email, user_passwd, user_nome):
         # DEBUG
         print(count, "Record inserted successfully into utilizadores table")
 
-        postgres_insert_query_2 = """ INSERT INTO cliente (utilizador_email) VALUES (%s)"""
-        record_to_insert_2 = (user_email,)
-
-        cursor.execute(postgres_insert_query_2, record_to_insert_2)
-        connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into clientes table")
-
     except (Exception, psycopg2.Error):
         if(connection):
             print("Esse email já tem conta criada! Insira outro email.")
