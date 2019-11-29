@@ -65,10 +65,11 @@ def menu_inicial():
         menu_inicial()
 
 
-def menu_cliente():
+def menu_cliente(user):
     print("********************************")
     print("*********Menu Principal*********")
     print("********************************")
+    print("Cliente:",user)
     print("1.\tListar todos os albuns")
     print("2.\tCarrinho")
     print("3.\tHistórico de compras")
@@ -82,7 +83,7 @@ def menu_cliente():
         else:
             break
     if opcao == '1':
-        print()
+        funcoes.listar_albuns()
     elif opcao == '2':
         print()
     elif opcao == '3':
