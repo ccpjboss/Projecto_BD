@@ -6,5 +6,5 @@ import funcoes
 funcoes.connect_db()
 print()
 #menu.menu_inicial()
-#menu.menu_cliente()
-funcoes.listar_albuns()
+menu.menu_cliente('lol')
+#funcoes.listar_albuns()

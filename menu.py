@@ -92,3 +92,18 @@ def menu_cliente(user):
         print()
     elif opcao == '5':
         print()
+
+def menu_detalhes():
+    print()
+    print("1.\tVer detalhes de um album")
+    print("2.\tSair")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        funcoes.detalhes_album()
+    elif opcao == '2':
+        menu_cliente('lol')
