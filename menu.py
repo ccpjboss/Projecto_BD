@@ -2,6 +2,16 @@
 
 import funcoes
 import getpass
+from datetime import datetime
+
+
+def validate(date_text):
+    try:
+        if date_text != datetime.strptime(date_text, "%Y-%m-%d").strftime('%Y-%m-%d'):
+            raise ValueError
+        return True
+    except ValueError:
+        return False
 
 
 def menu_inicial():
@@ -110,7 +120,93 @@ def menu_admin(user):
         else:
             break
     if opcao == '1':
-        print()
+        while True:
+            album_nome = input("Nome: ")
+            if album_nome == '':
+                print("Não insira um campo vazio")
+            else:
+                break
+        while True:
+            album_preco = float(input("Preço "))
+            if album_preco == 0:
+                print("Erro preço não pode ser zero")
+            else:
+                break
+        while True:
+            album_nstock = int(input("Qual vai ser o stock inicial: "))
+            if album_nstock == 0:
+                print("Não pode ser 0")
+            else:
+                break
+        while True:
+            print("Insira no formato yyyy-mm-dd")
+            album_data_edicao = input("Data de edição: ")
+            if validate(album_data_edicao) == False:
+                print("Insira a data no formato pedido!")
+            else:
+                break
+        while True:
+            album_editora = input("Editora: ")
+            if album_editora == '':
+                print("Não insira um campo vazio")
+            else:
+                break
+        # Vai buscar o id da editora e guarda
+        id_editora = funcoes.get_id_editora(album_editora)
+
+        # Se a funcao retornar none quer dizer que não existe nenhuma editora com aquele nome
+        if id_editora == None:
+            funcoes.cria_editora(album_editora)  # Cria a editora inserida
+        # Vai buscar o id da editora e guarda
+        id_editora = funcoes.get_id_editora(album_editora)
+
+        while True:
+            album_artista = input("Artista: ")
+            if album_artista == '':
+                print("Não insira um campo vazio")
+            else:
+                break
+        id_artista = funcoes.get_id_artista(album_artista)
+
+        if id_artista == None:
+            funcoes.cria_artista(album_artista)
+        id_artista = funcoes.get_id_artista(album_artista)
+
+        while True:
+            album_genero = input("Genero: ")
+            if album_genero == '':
+                print("Não insira um campo vazio")
+            else:
+                break
+        id_genero = funcoes.get_id_genero(album_genero)
+
+        if id_genero == None:
+            funcoes.cria_genero(album_genero)
+        id_genero = funcoes.get_id_genero(album_genero)
+
+        id_musicas = []  # lista com o id das musicas
+        n = int(input("Quantas musicas tem o album: "))
+
+        for i in range(0, n):
+            while True:
+                nome_musica = input("Musica: ")
+                if nome_musica == '':
+                    print("Não insira um campo vazio")
+                else:
+                    funcoes.cria_musica(nome_musica)
+                    break
+
+        id_musicas = funcoes.get_musica_id(n)
+        funcoes.cria_album(album_nome, album_preco, album_nstock,
+                           album_data_edicao, id_editora)
+        id_album = funcoes.get_id_album(album_nome)
+
+        funcoes.insere_artista_album(id_album, id_artista)
+        funcoes.insere_genero_album(id_album, id_genero)
+
+        for i in id_musicas:
+            funcoes.insere_musica_album(id_album, i)
+
     elif opcao == '2':
         print()
     elif opcao == '3':
