@@ -149,10 +149,13 @@ def menu_admin(user):
                 print("Não insira um campo vazio")
             else:
                 break
+        # Vai buscar o id da editora e guarda
         id_editora = funcoes.get_id_editora(album_editora)
 
+        # Se a funcao retornar none quer dizer que não existe nenhuma editora com aquele nome
         if id_editora == None:
-            funcoes.cria_editora(album_editora)
+            funcoes.cria_editora(album_editora)  # Cria a editora inserida
+        # Vai buscar o id da editora e guarda
         id_editora = funcoes.get_id_editora(album_editora)
 
         while True:
@@ -179,8 +182,7 @@ def menu_admin(user):
             funcoes.cria_genero(album_genero)
         id_genero = funcoes.get_id_genero(album_genero)
 
-        musicas = []
-        id_musicas = []
+        id_musicas = []  # lista com o id das musicas
         n = int(input("Quantas musicas tem o album: "))
 
         for i in range(0, n):
@@ -190,7 +192,6 @@ def menu_admin(user):
                     print("Não insira um campo vazio")
                 else:
                     funcoes.cria_musica(nome_musica)
-                    musicas.append(nome_musica)
                     break
 
         id_musicas = funcoes.get_musica_id(n)

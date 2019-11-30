@@ -3,8 +3,6 @@ import psycopg2
 import psycopg2.extras
 
 # Coneção à base de dados basica
-
-
 def connect_db():
     try:
         connection = psycopg2.connect(user="postgres",
@@ -25,9 +23,6 @@ def connect_db():
     except (Exception, psycopg2.Error) as error:
 
         print("Error while connecting to PostgreSQL", error)
-
-# Insere novo utilizador na base de dados
-
 
 def insere_novo_user(user_email, user_passwd, user_nome):
     try:
@@ -58,7 +53,6 @@ def insere_novo_user(user_email, user_passwd, user_nome):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
-
 
 def check_login(input_email, input_password):
     try:
@@ -114,7 +108,6 @@ def get_musica_id(n):
             cursor.close()
             connection.close()
 
-
 def get_id_genero(nome):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -136,7 +129,6 @@ def get_id_genero(nome):
         if(connection):
             cursor.close()
             connection.close()
-
 
 def get_id_album(nome):
     try:
@@ -160,7 +152,6 @@ def get_id_album(nome):
             cursor.close()
             connection.close()
 
-
 def get_id_editora(nome):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -181,7 +172,6 @@ def get_id_editora(nome):
         if(connection):
             cursor.close()
             connection.close()
-
 
 def get_id_artista(nome):
     try:
