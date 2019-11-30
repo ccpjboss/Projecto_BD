@@ -157,7 +157,7 @@ def menu_carrinho(user):
     elif opcao == '2':
         funcoes.adicionar_carrinho(user)
     elif opcao == '3':
-        print()
+        funcoes.remover_carrinho(user)
     elif opcao == '4':
         print()
 
