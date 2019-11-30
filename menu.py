@@ -219,11 +219,12 @@ def menu_admin(user):
         menu_admin(user)
     elif opcao == '2':
         funcoes.visualiza_albuns_stock(user)
-        menu_acoes_admin(user)
+        menu_admin(user)
     elif opcao == '3':
         print()
     elif opcao == '4':
-        print()
+        funcoes.aumenta_saldo(user)
+        menu_admin(user)
     elif opcao == '5':
         print()
     elif opcao == '6':
