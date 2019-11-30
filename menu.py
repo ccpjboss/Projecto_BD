@@ -80,16 +80,17 @@ def menu_cliente(user):
     print("********************************")
     print("*********Menu Principal*********")
     print("********************************")
-    print("Cliente:",user)
+    print("Cliente:", user)
     print("1.\tListar todos os albuns")
     print("2.\tCarrinho")
     print("3.\tHistórico de compras")
     print("4.\tMensagens")
     print("5.\tPesquisar")
+    print("6.\tSair")
 
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2', '3', '4', '5']:
+        if opcao not in ['1', '2', '3', '4', '5', '6']:
             print("Insira uma opção valida!")
         else:
             break
@@ -103,6 +104,8 @@ def menu_cliente(user):
         print()
     elif opcao == '5':
         print()
+    elif opcao == '6':
+        exit()
 
 
 def menu_admin(user):
@@ -219,6 +222,7 @@ def menu_admin(user):
         print("Xau")
         exit()
 
+
 def menu_detalhes(user):
     print()
     print("1.\tVer detalhes de um album")
@@ -234,6 +238,7 @@ def menu_detalhes(user):
     elif opcao == '2':
         menu_cliente(user)
 
+
 def menu_carrinho(user):
     print("********************************")
     print("************Carrinho************")
@@ -242,9 +247,10 @@ def menu_carrinho(user):
     print("2.\tAdicionar Album")
     print("3.\tRemover Album")
     print("4.\tFinalizar Compra")
+    print("5.\tVoltar atrás")
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2','3','4']:
+        if opcao not in ['1', '2', '3', '4', '5']:
             print("Insira uma opção válida!")
         else:
             break
@@ -256,4 +262,5 @@ def menu_carrinho(user):
         print()
     elif opcao == '4':
         print()
-
+    elif opcao == '5':
+        menu_cliente(user)

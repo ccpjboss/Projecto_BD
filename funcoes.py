@@ -209,7 +209,7 @@ def adicionar_carrinho(user):
             else:
                 break
 
-        cursor.execute("SELECT DISTINCT id, n_stock, preco FROM album WHERE album.id = %s;",(op1))
+        cursor.execute("SELECT DISTINCT id, n_stock, preco FROM album WHERE album.id = %s;",(op1,))
         id = 0
         quant = 0
         preco = 0
@@ -226,7 +226,7 @@ def adicionar_carrinho(user):
         cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
                         "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,preco,user,op1))
         connection.commit()
-
+        menu.menu_carrinho(user)
 
 
     except (Exception, psycopg2.Error) as error:
