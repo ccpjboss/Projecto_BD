@@ -211,6 +211,7 @@ def menu_admin(user):
             funcoes.insere_musica_album(id_album, i)
 
         funcoes.insere_historico_preco(user, id_album, album_preco)
+        menu_admin(user)
     elif opcao == '2':
         funcoes.visualiza_albuns_stock(user)
         menu_acoes_admin(user)
@@ -276,7 +277,8 @@ def menu_acoes_admin2(user):
         funcoes.ver_historico_preco(user)
         menu_admin(user)
     elif opcao == '3':
-        print()
+        funcoes.remove_album(user)
+        menu_admin(user)
     elif opcao == '4':
         menu_admin(user)
 

@@ -674,3 +674,71 @@ def ver_historico_preco(user):
         if(connection):
             cursor.close()
             connection.close()
+def remove_album(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        id_album = []
+        id_album_compra = []
+        cursor.execute("SELECT id FROM album WHERE em_stock = true AND comprado = false")
+        for linha in cursor.fetchall():
+            id_album.append(linha[0])
+        print(id_album)
+        
+        cursor.execute("SELECT DISTINCT album_id FROM compra")
+        for linha in cursor.fetchall():
+            id_album_compra.append(linha[0])
+        print(id_album_compra)
+        if id_album == id_album_compra:
+            print("Não existem albuns que possam ser removidos!")
+            return
+        while True:
+            id = int(input("Insira o id do álbum: "))
+            if (id not in id_album) or (id in id_album_compra):
+                print("Não é possivel selecionar esse álbum! Não existe, já foi comprado ou está no carrinho de uma pessoa")
+            else:
+                break
+        cursor.execute("DELETE FROM artista_album WHERE album_id = %s;",(id,))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record deleted successfully")
+
+        cursor.execute("DELETE FROM genero_album WHERE album_id = %s;",(id,))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record deleted successfully")
+
+        cursor.execute("DELETE FROM musica_album WHERE album_id = %s;",(id,))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record deleted successfully")
+
+        cursor.execute("DELETE FROM historico_preco WHERE album_id = %s;",(id,))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record deleted successfully")
+
+        cursor.execute("DELETE FROM album WHERE id = %s",(id,))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record deleted successfully")
+        
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
