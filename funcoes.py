@@ -423,9 +423,11 @@ def finalizar_compra(user):
             menu.menu_carrinho(user)
 
         sal = saldo - valor
-        cursor.execute("UPDATE cliente SET saldo =%s",(sal,))
+        cursor.execute("UPDATE cliente SET saldo =%s;",(sal,))
         connection.commit()
-        cursor.execute("UPDATE compra SET finalizada = true")
+        cursor.execute("UPDATE compra SET data2 = now() WHERE finalizada = false;")
+        connection.commit()
+        cursor.execute("UPDATE compra SET finalizada = true;")
         atualiza_stock()
         connection.commit()
         print("Compra Bem sucedida")
