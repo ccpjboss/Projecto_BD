@@ -206,7 +206,7 @@ def adicionar_carrinho(user):
         while True:
             op1 = input("Insira o ID do album que pretende adicionar: ")
             if op1 not in album_id:
-                print("Insira uma opção válida!")
+                print("O ID que pretende adicionar não existe!")
             else:
                 break
 
@@ -238,26 +238,33 @@ def adicionar_carrinho(user):
             album_id.append(str(linha[0]))
 
         if op1 in album_id:
-            cursor.execute("SELECT valor, quantidade FROM compra WHERE album_id = %s;",(op1,))
+            cursor.execute("SELECT valor, quantidade, finalizada FROM compra WHERE album_id = %s;",(op1,))
             quant = 0
             val = 0
             for linha in cursor.fetchall():
                 val = linha[0]
                 quant = linha[1]
+                finalizada = linha[2]
             valor1 = preco*op2
             val = val + valor1
             quant = quant + op2
-            cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s;",(quant,val, op1))
-            connection.commit()
-            print("Após esta operação o valor total do seu carrinho é: ", val, "€")
-            menu.menu_carrinho(user)
+
+            if finalizada is False:
+                cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s AND finalizada = false;",(quant,val, op1))
+                connection.commit()
+            else:
+                valor = op2 * preco
+                cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
+                    "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);", (op2, valor, user, op1))
+                connection.commit()
         else:
             valor = op2*preco
             cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
                             "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,valor,user,op1))
             connection.commit()
-            print("Após esta operação o valor total do seu carrinho é: ", valor, "€")
-            menu.menu_carrinho(user)
+
+        print("Após esta operação o valor total do seu carrinho é: ", valor_total(), "€")
+        menu.menu_carrinho(user)
 
 
     except (Exception, psycopg2.Error) as error:
@@ -290,7 +297,7 @@ def remover_carrinho(user):
             else:
                 break
 
-        cursor.execute("SELECT album_id FROM compra;")
+        cursor.execute("SELECT album_id FROM compra WHERE finalizada = false;")
         album_id = []
         for linha in cursor.fetchall():
             album_id.append(str(linha[0]))
@@ -299,7 +306,7 @@ def remover_carrinho(user):
             print("O album que pretende remover não se encontra no carrinho")
             menu.menu_carrinho(user)
 
-        cursor.execute("SELECT quantidade, valor FROM compra WHERE album_id = %s;", (op1,))
+        cursor.execute("SELECT quantidade, valor FROM compra WHERE album_id = %s AND finalizada = false;", (op1,))
         quant = 0
         val = 0
         for linha in cursor.fetchall():
@@ -312,15 +319,15 @@ def remover_carrinho(user):
             else:
                 break
         if op2 == quant:
-            cursor.execute("DELETE FROM compra WHERE album_id = %s;",(op1,))
+            cursor.execute("DELETE FROM compra WHERE album_id = %s AND finalizada = false;",(op1,))
             connection.commit()
             menu.menu_carrinho(user)
         quant = quant-op2
         valor1 = preco*op2
         val = val - valor1
-        cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s;",(quant,val,op1))
+        cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s AND finalizada = false;",(quant,val,op1))
         connection.commit()
-        print("Após esta operação o valor total do seu carrinho é: ", val, "€")
+        print("Após esta operação o valor total do seu carrinho é: ", valor_total(), "€")
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -342,8 +349,8 @@ def ver_carrinho(user):
 
         cursor = connection.cursor()
         print()
-        cursor.execute("SELECT album_id, quantidade, valor FROM compra;")
-        valor = 0
+        cursor.execute("SELECT album_id, quantidade, valor FROM compra WHERE finalizada = false;")
+
         for linha in cursor.fetchall():
             album_id = linha[0]
             quant = linha[1]
@@ -356,14 +363,36 @@ def ver_carrinho(user):
             print("Quantidade: ", quant)
             print("Valor: ",val)
             print("----//----")
-            valor = valor + val
-
-        if valor == 0:
+        if valor_total() == 0:
             print("O seu carrinho está vazio")
         else:
-            print("O valor total do seu carrinho é: ", valor,"€")
+            print("O valor total do seu carrinho é: ", valor_total(),"€")
         menu.menu_carrinho(user)
 
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def valor_total():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT valor FROM compra WHERE finalizada = false;")
+
+        valor = 0
+        for linha in cursor.fetchall():
+            val = linha[0]
+            valor = valor + val
+        return (valor)
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
     finally:
@@ -396,8 +425,10 @@ def finalizar_compra(user):
         sal = saldo - valor
         cursor.execute("UPDATE cliente SET saldo =%s;",(sal,))
         connection.commit()
+        cursor.execute("UPDATE compra SET data2 = now() WHERE finalizada = false;")
+        connection.commit()
+        cursor.execute("UPDATE compra SET finalizada = true;")
         atualiza_stock()
-        cursor.execute("DELETE FROM compra WHERE finalizada is false;")
         connection.commit()
         print("Compra Bem sucedida")
         menu.menu_carrinho(user)
