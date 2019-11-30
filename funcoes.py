@@ -547,3 +547,94 @@ def insere_musica_album(id_album,id_musica):
         if(connection):
             cursor.close()
             connection.close()
+
+def visualiza_albuns_stock(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, nome, n_stock FROM album WHERE em_stock = TRUE;")
+        for linha in cursor.fetchall():
+            id = linha[0]
+            nome = linha[1]
+            n_stock = linha[2]
+            print("ID:\t",id, "\tNome: ",nome,"\tQuantidade: \t",n_stock)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
+def insere_historico_preco(user,album_id,preco):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO historico_preco VALUES (%s,now(),%s,%s,nextval('altera_id_sequence'));",(preco,user,album_id))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record inserted successfully into historico_preco table")
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
+def corrigir_preco(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        id_album = []
+        cursor.execute("SELECT id FROM album WHERE em_stock = true")
+        for linha in cursor.fetchall():
+            id_album.append(linha[0])
+        print(id_album)
+        while True:
+            id = int(input("Insira o id do álbum: "))
+            if id not in id_album:
+                print("Não é possivel selecionar esse álbum")
+            else:
+                break
+        cursor.execute("SELECT preco FROM album WHERE id = %s;",(id,))
+        for linha in cursor.fetchall():
+            print("O preço atual é: ",linha[0])
+        while True:
+            novo_preco = float(input("Qual será o novo preco: "))
+            if novo_preco == 0:
+                print("Valor invalido!")
+            else:
+                break
+        cursor.execute("UPDATE album SET preco = %s WHERE id =%s;",(novo_preco,id))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record updated successfully")
+        insere_historico_preco(user,id,novo_preco)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
