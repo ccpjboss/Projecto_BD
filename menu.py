@@ -188,7 +188,12 @@ def menu_admin(user):
         id_genero = funcoes.get_id_genero(album_genero)
 
         id_musicas = []  # lista com o id das musicas
-        n = int(input("Quantas musicas tem o album: "))
+        while True:
+            n = int(input("Quantas musicas tem o album: "))
+            if n == 0:
+                print("O album não pode ter 0 musicas!")
+            else:
+                break
 
         for i in range(0, n):
             while True:
