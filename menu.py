@@ -84,9 +84,9 @@ def menu_cliente(user):
         else:
             break
     if opcao == '1':
-        funcoes.listar_albuns()
+        funcoes.listar_albuns(user)
     elif opcao == '2':
-        print()
+        menu_carrinho(user)
     elif opcao == '3':
         print()
     elif opcao == '4':
@@ -123,7 +123,7 @@ def menu_admin(user):
         print("Xau")
         exit()
 
-def menu_detalhes():
+def menu_detalhes(user):
     print()
     print("1.\tVer detalhes de um album")
     print("2.\tSair")
@@ -134,6 +134,30 @@ def menu_detalhes():
         else:
             break
     if opcao == '1':
-        funcoes.detalhes_album()
+        funcoes.detalhes_album(user)
     elif opcao == '2':
-        menu_cliente('lol')
+        menu_cliente(user)
+
+def menu_carrinho(user):
+    print("********************************")
+    print("************Carrinho************")
+    print("********************************")
+    print("1.\tVer Albuns no Carrinho")
+    print("2.\tAdicionar Album")
+    print("3.\tRemover Album")
+    print("4.\tFinalizar Compra")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2','3','4']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        print()
+    elif opcao == '2':
+        funcoes.adicionar_carrinho(user)
+    elif opcao == '3':
+        print()
+    elif opcao == '4':
+        print()
+
