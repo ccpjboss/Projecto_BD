@@ -210,8 +210,10 @@ def menu_admin(user):
         for i in id_musicas:
             funcoes.insere_musica_album(id_album, i)
 
+        funcoes.insere_historico_preco(user, id_album, album_preco)
     elif opcao == '2':
-        print()
+        funcoes.visualiza_albuns_stock(user)
+        menu_acoes_admin(user)
     elif opcao == '3':
         print()
     elif opcao == '4':
@@ -237,6 +239,45 @@ def menu_detalhes(user):
         funcoes.detalhes_album(user)
     elif opcao == '2':
         menu_cliente(user)
+
+
+def menu_acoes_admin(user):
+    print()
+    print("1. \tAções sobre um album")
+    print("2. \tSair")
+    while True:
+        opcao = input("Insira uma opcão: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opcão valida")
+        else:
+            break
+    if opcao == '1':
+        menu_acoes_admin2(user)
+    elif opcao == '2':
+        menu_admin(user)
+
+
+def menu_acoes_admin2(user):
+    print("**********Ações**********")
+    print("1. \tCorrigir preços")
+    print("2. \tVer historico de preços")
+    print("3. \tRemover")
+    print("4. \tVoltar ao menu principal")
+    while True:
+        opcao = input("Insira uma opcão: ")
+        if opcao not in ['1', '2', '3', '4']:
+            print("Insira uma opcão valida")
+        else:
+            break
+    if opcao == '1':
+        funcoes.corrigir_preco(user)
+        menu_admin(user)
+    elif opcao == '2':
+        print()
+    elif opcao == '3':
+        print()
+    elif opcao == '4':
+        menu_admin(user)
 
 
 def menu_carrinho(user):
