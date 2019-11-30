@@ -273,7 +273,8 @@ def menu_acoes_admin2(user):
         funcoes.corrigir_preco(user)
         menu_admin(user)
     elif opcao == '2':
-        print()
+        funcoes.ver_historico_preco(user)
+        menu_admin(user)
     elif opcao == '3':
         print()
     elif opcao == '4':

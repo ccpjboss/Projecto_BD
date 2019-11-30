@@ -638,3 +638,39 @@ def corrigir_preco(user):
         if(connection):
             cursor.close()
             connection.close()
+
+def ver_historico_preco(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        id_album = []
+        cursor.execute("SELECT id FROM album WHERE em_stock = true")
+        for linha in cursor.fetchall():
+            id_album.append(linha[0])
+        print(id_album)
+        while True:
+            id = int(input("Insira o id do álbum: "))
+            if id not in id_album:
+                print("Não é possivel selecionar esse álbum")
+            else:
+                break
+        cursor.execute("SELECT historico_preco.preco,historico_preco.data, album.nome FROM album, historico_preco WHERE album.id = %s;",(id,))
+        for linha in cursor.fetchall():
+            preco = linha[0]
+            data = linha[1]
+            nome = linha[2]
+            print("Nome:\t",nome, "\tPreco: ",preco,"Data: \t",data)
+        
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
