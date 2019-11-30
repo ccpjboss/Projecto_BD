@@ -253,12 +253,14 @@ def adicionar_carrinho(user):
             quant = quant + op2
             cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s;",(quant,val, op1))
             connection.commit()
+            print("Após esta operação o valor total do seu carrinho é: ", val, "€")
             menu.menu_carrinho(user)
         else:
             valor = op2*preco
             cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
                             "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,valor,user,op1))
             connection.commit()
+            print("Após esta operação o valor total do seu carrinho é: ", valor, "€")
             menu.menu_carrinho(user)
 
 
@@ -322,6 +324,7 @@ def remover_carrinho(user):
         val = val - valor1
         cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s;",(quant,val,op1))
         connection.commit()
+        print("Após esta operação o valor total do seu carrinho é: ", val, "€")
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -333,3 +336,114 @@ def remover_carrinho(user):
             connection.close()
 
 
+def ver_carrinho(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        print()
+        cursor.execute("SELECT album_id, quantidade, valor FROM compra;")
+        valor = 0
+        for linha in cursor.fetchall():
+            album_id = linha[0]
+            quant = linha[1]
+            val = linha[2]
+            cursor.execute("SELECT nome FROM album WHERE id =%s;",(album_id,))
+            for linha in cursor.fetchall():
+                nome = linha[0]
+            print("ID do album: ",album_id)
+            print("Nome: ", nome)
+            print("Quantidade: ", quant)
+            print("Valor: ",val)
+            print("----//----")
+            valor = valor + val
+
+        if valor == 0:
+            print("O seu carrinho está vazio")
+        else:
+            print("O valor total do seu carrinho é: ", valor,"€")
+        menu.menu_carrinho(user)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def finalizar_compra(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT saldo, valor FROM cliente, compra;")
+
+        valor = 0
+        for linha in cursor.fetchall():
+            saldo = linha[0]
+            val = linha[1]
+            valor = valor + val
+
+        if saldo < valor:
+            print("O seu saldo é insuficiente")
+            menu.menu_carrinho(user)
+
+        sal = saldo - valor
+        cursor.execute("UPDATE cliente SET saldo =%s;",(sal,))
+        connection.commit()
+        atualiza_stock()
+        cursor.execute("DELETE FROM compra WHERE finalizada is false;")
+        connection.commit()
+        print("Compra Bem sucedida")
+        menu.menu_carrinho(user)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def atualiza_stock():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT n_stock, id FROM album WHERE album.id IN(SELECT album_id FROM compra);")
+
+        stock = 0
+        for linha in cursor.fetchall():
+            n_stock = linha[0]
+            id = linha[1]
+            cursor.execute("SELECT quantidade FROM compra WHERE album_id = %s;",(id,))
+            for linha in cursor.fetchall():
+                quant = linha[0]
+                stock = n_stock - quant
+                cursor.execute("UPDATE album SET n_stock = %s WHERE id = %s;",(stock,id))
+                connection.commit()
+                if stock == 0:
+                    cursor.execute("UPDATE album SET em_stock = false WHERE id = %s;",(id,))
+                    connection.commit()
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()

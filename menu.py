@@ -76,10 +76,11 @@ def menu_cliente(user):
     print("3.\tHistórico de compras")
     print("4.\tMensagens")
     print("5.\tPesquisar")
+    print("6.\tSair")
 
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2', '3', '4', '5']:
+        if opcao not in ['1', '2', '3', '4', '5','6']:
             print("Insira uma opção valida!")
         else:
             break
@@ -93,6 +94,9 @@ def menu_cliente(user):
         print()
     elif opcao == '5':
         print()
+    elif opcao == '6':
+        print("Obrigado e volte sempre!")
+        exit()
 
 
 def menu_admin(user):
@@ -146,18 +150,22 @@ def menu_carrinho(user):
     print("2.\tAdicionar Album")
     print("3.\tRemover Album")
     print("4.\tFinalizar Compra")
+    print("5.\tMenu Principal")
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2','3','4']:
+        if opcao not in ['1', '2','3','4','5']:
             print("Insira uma opção válida!")
         else:
             break
+
     if opcao == '1':
-        print()
+        funcoes.ver_carrinho(user)
     elif opcao == '2':
         funcoes.adicionar_carrinho(user)
     elif opcao == '3':
         funcoes.remover_carrinho(user)
     elif opcao == '4':
-        print()
+        funcoes.finalizar_compra(user)
+    elif opcao == '5':
+        menu_cliente(user)
 
