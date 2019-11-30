@@ -105,6 +105,7 @@ def menu_cliente(user):
     elif opcao == '5':
         print()
     elif opcao == '6':
+        print("Obrigado e volte sempre!")
         exit()
 
 
@@ -297,20 +298,21 @@ def menu_carrinho(user):
     print("2.\tAdicionar Album")
     print("3.\tRemover Album")
     print("4.\tFinalizar Compra")
-    print("5.\tVoltar atrás")
+    print("5.\tMenu Principal")
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2', '3', '4', '5']:
+        if opcao not in ['1', '2','3','4','5']:
             print("Insira uma opção válida!")
         else:
             break
+
     if opcao == '1':
-        print()
+        funcoes.ver_carrinho(user)
     elif opcao == '2':
         funcoes.adicionar_carrinho(user)
     elif opcao == '3':
-        print()
+        funcoes.remover_carrinho(user)
     elif opcao == '4':
-        print()
+        funcoes.finalizar_compra(user)
     elif opcao == '5':
         menu_cliente(user)
