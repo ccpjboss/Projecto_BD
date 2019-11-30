@@ -833,6 +833,11 @@ def corrigir_preco(user):
         print(count, "Record updated successfully")
         insere_historico_preco(user,id,novo_preco)
 
+        cursor.execute("UPDATE compra SET valor=quantidade*%s WHERE album_id = %s;",(novo_preco,id))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record updated successfully")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 

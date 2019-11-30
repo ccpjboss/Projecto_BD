@@ -220,7 +220,7 @@ def menu_admin(user):
         menu_admin(user)
     elif opcao == '2':
         funcoes.visualiza_albuns_stock(user)
-        menu_admin(user)
+        menu_acoes_admin(user)
     elif opcao == '3':
         print()
     elif opcao == '4':
@@ -301,7 +301,7 @@ def menu_carrinho(user):
     print("5.\tMenu Principal")
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2','3','4','5']:
+        if opcao not in ['1', '2', '3', '4', '5']:
             print("Insira uma opção válida!")
         else:
             break
