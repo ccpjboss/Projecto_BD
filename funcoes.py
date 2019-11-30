@@ -206,6 +206,7 @@ def adicionar_carrinho(user):
         album_id = []
         for linha in cursor.fetchall():
             album_id.append(str(linha[0]))
+
         while True:
             op1 = input("Insira o ID do album que pretende adicionar: ")
             if op1 not in album_id:
@@ -213,24 +214,47 @@ def adicionar_carrinho(user):
             else:
                 break
 
-        cursor.execute("SELECT DISTINCT id, n_stock, preco FROM album WHERE album.id = %s;",(op1))
-        id = 0
+        cursor.execute("SELECT n_stock FROM album WHERE id = %s;",(op1,))
+        stock = 0
+        for linha in cursor.fetchall():
+            stock = linha[0]
+
+        if stock == 0:
+            print("De momento este album não se encontra em stock")
+            menu.menu_carrinho(user)
+
+        cursor.execute("SELECT DISTINCT n_stock, preco FROM album WHERE album.id = %s;",(op1,))
         quant = 0
         preco = 0
         for linha in cursor.fetchall():
-            id = linha[0]
-            quant = linha[1]
-            preco = linha[2]
+            quant = linha[0]
+            preco = linha[1]
         while True:
             op2 = int(input("Insira a quantidade que deseja: "))
             if op2 > quant:
                 print("A quantidade que deseja adicionar é superior aos albuns em stock")
             else:
                 break
-        cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
-                        "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,preco,user,op1))
-        connection.commit()
 
+        cursor.execute("SELECT album_id FROM compra;")
+        album_id = []
+        for linha in cursor.fetchall():
+            album_id.append(str(linha[0]))
+
+        if op1 in album_id:
+            cursor.execute("SELECT quantidade FROM compra WHERE album_id = %s;",(op1,))
+            quant = 0
+            for linha in cursor.fetchall():
+                quant = linha[0]
+            quant = quant + op2
+            cursor.execute("UPDATE compra SET quantidade = %s, data = now() WHERE album_id = %s;",(quant,op1))
+            connection.commit()
+            menu.menu_carrinho(user)
+        else:
+            cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
+                            "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,preco,user,op1))
+            connection.commit()
+            menu.menu_carrinho(user)
 
 
     except (Exception, psycopg2.Error) as error:
@@ -240,6 +264,3 @@ def adicionar_carrinho(user):
         if (connection):
             cursor.close()
             connection.close()
-
-
-
