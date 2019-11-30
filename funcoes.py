@@ -742,3 +742,58 @@ def remove_album(user):
         if(connection):
             cursor.close()
             connection.close()
+
+def aumenta_saldo(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM cliente")
+        for linha in cursor.fetchall():
+            email = linha[1]
+            saldo = linha[0]
+            print("Email:\t",email, "\tSaldo: ",saldo)
+        
+        email_cliente = []
+        cursor.execute("SELECT utilizador_email FROM cliente")
+        for linha in cursor.fetchall():
+            email_cliente.append(linha[0])
+        
+        while True:
+            email_input = input("Insira o email do utilizador: ")
+            if email_input not in email_cliente:
+                print("Esse utilizador não existe...")
+            else:
+                break
+        
+        while True:
+            aumento = float(input("Quanto deseja aumentar: "))
+            if aumento == 0:
+                print("Não é possivel adicionar 0 euros...")
+            else:
+                break
+        cursor.execute("SELECT saldo FROM cliente WHERE utilizador_email = %s;",(email_input,))
+        for linha in cursor.fetchall():
+            saldo_antigo = linha[0]
+        novo_saldo = saldo_antigo + aumento
+
+        cursor.execute("UPDATE cliente SET saldo = %s WHERE utilizador_email = %s;",(novo_saldo,email_input))
+        connection.commit()
+
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record updated successfully")
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
