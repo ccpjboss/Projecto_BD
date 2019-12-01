@@ -1036,3 +1036,44 @@ def aumenta_saldo(user):
         if(connection):
             cursor.close()
             connection.close()
+
+def historico_compra(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT id, data, valor, quantidade, data2, album_id FROM compra WHERE finalizada = true")
+        for linha in cursor.fetchall():
+            id = linha[0]
+            data = linha[1]
+            valor = linha[2]
+            quant = linha[3]
+            data2 = linha[4]
+            album_id = linha[5]
+            cursor.execute("SELECT nome FROM album WHERE id = %s;",(album_id,))
+            for linha in cursor.fetchall():
+                album_nome = linha[0]
+            print("ID da compra: ",id)
+            print("ID do album: ", album_id)
+            print("Nome do album: ", album_nome)
+            print("Quantidade: ", quant)
+            print("Valor: ", valor)
+            print("Data em que foi adicionado ao carrinho: ", data)
+            print("Data em que foi comprado: ", data2)
+            print("-------------------//-------------------------")
+        menu.menu_cliente(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
