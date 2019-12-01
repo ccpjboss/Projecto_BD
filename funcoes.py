@@ -1128,3 +1128,29 @@ def total_albuns():
         if(connection):
             cursor.close()
             connection.close()
+
+def valor_discos_stock():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        total=0
+        cursor.execute("SELECT preco,n_stock FROM album WHERE em_stock=true;")
+        for linha in cursor.fetchall():
+            preco=linha[0]
+            quantidade=linha[1]
+            total += quantidade*preco
+        print("O valor total de todos os albuns é ", total)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
