@@ -95,11 +95,14 @@ def menu_cliente(user):
         else:
             break
     if opcao == '1':
+        print()
         funcoes.listar_albuns(user)
     elif opcao == '2':
+        print()
         menu_carrinho(user)
     elif opcao == '3':
         print()
+        funcoes.historico_compra(user)
     elif opcao == '4':
         print()
     elif opcao == '5':
