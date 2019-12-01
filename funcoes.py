@@ -88,7 +88,7 @@ def check_login(input_email, input_password):
             connection.close()
 
 def listar_albuns(user):
-    global id_album, nome_album, artista
+    #global id_album, nome_album, artista
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -1046,7 +1046,7 @@ def historico_compra(user):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        cursor.execute("SELECT id, data, valor, quantidade, data2, album_id FROM compra WHERE finalizada = true AND cliente_utilizador_ email = %s;",(user,))
+        cursor.execute("SELECT id, data, valor, quantidade, data2, album_id FROM compra WHERE finalizada = true AND cliente_utilizador_email = %s;",(user,))
         for linha in cursor.fetchall():
             id = linha[0]
             data = linha[1]
@@ -1242,5 +1242,91 @@ def total_albuns_editora():
     finally:
         # closing database connection.
         if(connection):
+            cursor.close()
+            connection.close()
+
+def mensagem_cliente(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        print("********************************")
+        print("********Caixa de Entrada********")
+        print("********************************")
+        cursor.execute("SELECT id, assunto, data FROM mensagem "
+                       "WHERE id IN (SELECT mensagem_id FROM leitura WHERE cliente_utilizador_email = %s)"
+                       "ORDER BY data;",(user,))
+        for linha in cursor.fetchall():
+            id = linha[0]
+            assunto = linha[1]
+            data = linha[2]
+            print("ID: ",id)
+            print("Assunto: ", assunto)
+            print("Data: ", data)
+            cursor.execute("SELECT lida FROM leitura WHERE mensagem_id = %s AND cliente_utilizador_email = %s;",(id,user))
+            for linha in cursor.fetchall():
+                lida = linha[0]
+                if lida is True:
+                    print("Lida: Sim")
+                else:
+                    print("Lida: Não")
+            print("-------//-------")
+        menu.caixa_entrada(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def ler_mensagem(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT mensagem_id FROM leitura WHERE cliente_utilizador_email = %s;",(user,))
+        mensagem_id=[]
+        for linha in cursor.fetchall():
+            mensagem_id.append(str(linha[0]))
+        while True:
+            op1 = input("Insira o ID da mensagem que pretende ler: ")
+            if op1 not in mensagem_id:
+                print("Insira um ID válido!")
+            else:
+                break
+        cursor.execute("SELECT id, texto, assunto, data FROM mensagem WHERE id = %s",(op1,))
+        for linha in cursor.fetchall():
+            id = linha[0]
+            texto = linha[1]
+            assunto = linha[2]
+            data = linha[3]
+            print()
+            print("ID: ",id)
+            print("Data: ",data)
+            print("Assunto: ",assunto)
+            print("Texto: ", texto)
+
+        cursor.execute("UPDATE leitura SET lida = true WHERE mensagem_id = %s AND cliente_utilizador_email = %s;",(op1,user))
+        connection.commit()
+        menu.caixa_entrada(user)
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
             cursor.close()
             connection.close()
