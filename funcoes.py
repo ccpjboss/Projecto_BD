@@ -922,7 +922,7 @@ def corrigir_preco(user):
             cursor.close()
             connection.close()
 
-def ver_historico_preco(user):
+def ver_historico_preco():
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -957,7 +957,7 @@ def ver_historico_preco(user):
         if(connection):
             cursor.close()
             connection.close()
-def remove_album(user):
+def remove_album():
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",

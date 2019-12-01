@@ -285,10 +285,10 @@ def menu_acoes_admin2(user):
         funcoes.corrigir_preco(user)
         menu_admin(user)
     elif opcao == '2':
-        funcoes.ver_historico_preco(user)
+        funcoes.ver_historico_preco()
         menu_admin(user)
     elif opcao == '3':
-        funcoes.remove_album(user)
+        funcoes.remove_album()
         menu_admin(user)
     elif opcao == '4':
         funcoes.update_quanitdade()
