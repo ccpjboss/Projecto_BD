@@ -1036,3 +1036,25 @@ def aumenta_saldo(user):
         if(connection):
             cursor.close()
             connection.close()
+
+def total_clientes():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM cliente")
+        count = cursor.rowcount
+        print("Nº de cliente registados: ", count)
+
+    #except (Exception, psycopg2.Error) as error:
+        #print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()

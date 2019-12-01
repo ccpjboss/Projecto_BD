@@ -227,7 +227,7 @@ def menu_admin(user):
         funcoes.aumenta_saldo(user)
         menu_admin(user)
     elif opcao == '5':
-        print()
+        menu_estatisticas(user)
     elif opcao == '6':
         print("Xau")
         exit()
@@ -316,3 +316,40 @@ def menu_carrinho(user):
         funcoes.finalizar_compra(user)
     elif opcao == '5':
         menu_cliente(user)
+
+
+def menu_estatisticas(user):
+    print()
+    print("******Estatisticas******")
+    print("1. \tTotal clientes")
+    print("2. \tTotal de discos")
+    print("3. \tValor total dos discos em stock")
+    print("4. \tValor total das vendas")
+    print("5. \tTotal de discos por genero")
+    print("6. \tTotal de discos por editora")
+    print("7. \tAlbuns com falta de stock(<5)")
+    print("8. \tSair")
+
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2', '3', '4', '5', '6', '7', '8']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        funcoes.total_clientes()
+        menu_estatisticas(user)
+    elif opcao == '2':
+        print()
+    elif opcao == '3':
+        print()
+    elif opcao == '4':
+        print()
+    elif opcao == '5':
+        print()
+    elif opcao == '6':
+        print()
+    elif opcao == '7':
+        print()
+    elif opcao == '8':
+        menu_admin(user)
