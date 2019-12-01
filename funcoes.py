@@ -115,7 +115,6 @@ def listar_albuns(user):
             connection.close()
 
 def detalhes_album(user):
-    global id_album, nome_album, artista
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -135,26 +134,21 @@ def detalhes_album(user):
             else:
                 break
 
-        cursor.execute("SELECT DISTINCT genero_id,artista_id, editora_id, musica_id "
-                        "FROM album, artista_album, genero_album, musica_album, editora "
-                        "WHERE genero_album.album_id = %s AND artista_album.album_id = %s"
-                        " AND album.id = %s AND musica_album.album_id = %s;", (op1, op1, op1, op1))
-        genero_id = 0
-        artista_id = 0
+        cursor.execute("SELECT DISTINCT editora_id "
+                        "FROM album "
+                        "WHERE album.id = %s;", (op1,))
+
         editora_id = 0
         for linha in cursor.fetchall():
-            genero_id = linha[0]
-            artista_id = linha[1]
-            editora_id = linha[2]
+            editora_id = linha[0]
 
-        cursor.execute("SELECT DISTINCT album.id, album.nome, preco, em_stock, n_stock, data_edicao, editora.nome, "
-                        "genero.nome, artista.nome, musica.nome "
-                        "FROM album, editora, genero, artista, musica "
-                        "WHERE album.id = %s AND editora.id = %s AND genero.id = %s AND artista.id = %s AND "
-                        "musica.id IN (SELECT DISTINCT musica_id FROM musica_album WHERE musica_album.album_id "
-                        "= %s);", (op1, editora_id, genero_id, artista_id, op1))
+        cursor.execute("SELECT DISTINCT album.id, album.nome, preco, em_stock, n_stock, data_edicao, editora.nome "
+                        "FROM album, editora "
+                        "WHERE album.id = %s AND editora.id = %s;", (op1, editora_id))
 
         musica = []
+        genero = []
+        artista = []
         for linha in cursor.fetchall():
             id_album = linha[0]
             nome_album = linha[1]
@@ -163,15 +157,23 @@ def detalhes_album(user):
             n_stock = linha[4]
             data_edicao = linha[5]
             editora = linha[6]
-            genero = linha[7]
-            artista = linha[8]
-            musica.append(linha[9])
+            cursor.execute("SELECT DISTINCT nome FROM genero WHERE id IN (SELECT DISTINCT genero_id FROM genero_album WHERE album_id = %s);",(op1,))
+            for linha in cursor.fetchall():
+                genero.append(linha[0])
+            cursor.execute("SELECT DISTINCT nome FROM artista WHERE id IN (SELECT DISTINCT artista_id FROM artista_album WHERE album_id = %s);",(op1,))
+            for linha in cursor.fetchall():
+                artista.append(linha[0])
+            cursor.execute("SELECT DISTINCT nome FROM musica WHERE id IN (SELECT DISTINCT musica_id FROM musica_album WHERE album_id = %s);",(op1,))
+            for linha in cursor.fetchall():
+                musica.append(linha[0])
         print("ID: ", id_album)
         print("Nome: ", nome_album)
-        print("Artista: ", artista)
+        for i, artistas in enumerate(artista, start=1):
+            print("Artista", i, ":", artistas)
         for i, musicas in enumerate(musica, start=1):
             print("Musica", i, ":", musicas)
-        print("Género:", genero)
+        for i, generos in enumerate(genero, start=1):
+            print("Género", i, ":", generos)
         print("Editora:", editora)
         print("Data de Edição:", data_edicao)
         print("Preço:", preco, "€")
@@ -1429,6 +1431,311 @@ def ler_mensagem(user):
         cursor.execute("UPDATE leitura SET lida = true WHERE mensagem_id = %s AND cliente_utilizador_email = %s;",(op1,user))
         connection.commit()
         menu.caixa_entrada(user)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_album_asc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome do album: ")
+
+        cursor.execute("SELECT id, nome FROM album WHERE nome LIKE '%"+op1+"%' ORDER BY nome ASC ;")
+        i = 0
+        for linha in cursor.fetchall():
+            id = linha[0]
+            nome = linha[1]
+            i = i + 1
+            print("ID: ",id,"Nome: ",nome)
+        if i == 0:
+            print("Não existe nenhum album com esse nome")
+            menu.menu_pesquisa(user)
+        menu.menu_detalhes(user)
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_album_des(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT nome FROM album")
+
+        op1 = input("Insira o nome do album: ")
+
+        cursor.execute("SELECT id, nome FROM album WHERE nome LIKE '%"+op1+"%' ORDER BY nome DESC ;")
+        i = 0
+        for linha in cursor.fetchall():
+            id = linha[0]
+            nome = linha[1]
+            i = i + 1
+            print("ID: ",id,"Nome: ",nome)
+        if i == 0:
+            print("Não existe nenhum album com esse nome")
+            menu.menu_pesquisa(user)
+        menu.menu_detalhes(user)
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_musica_asc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome da musica: ")
+
+        cursor.execute("SELECT id FROM musica WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_musica = linha[0]
+            cursor.execute("SELECT album_id FROM musica_album WHERE musica_id = %s;",(id_musica,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome ASC;",(id_album,))
+                i=0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i +1
+        if i == 0:
+            print("Não existem albuns com essa música")
+            menu.menu_pesquisa(user)
+        menu.menu_detalhes(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_musica_desc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome da musica: ")
+
+        cursor.execute("SELECT id FROM musica WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_musica = linha[0]
+            cursor.execute("SELECT album_id FROM musica_album WHERE musica_id = %s;",(id_musica,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome DESC;",(id_album,))
+                i = 0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i +1
+        if i == 0:
+            print("Não existem albuns com essa música")
+            menu.menu_pesquisa(user)
+        menu.menu_detalhes(user)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_genero_desc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome do género: ")
+
+        cursor.execute("SELECT id FROM genero WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_genero = linha[0]
+            cursor.execute("SELECT album_id FROM genero_album WHERE genero_id = %s;",(id_genero,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome DESC;",(id_album,))
+                i = 0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i +1
+        if i == 0:
+            print("Não existem albuns desse género")
+            menu.menu_pesquisa(user)
+        menu.menu_detalhes(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_genero_asc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome do género: ")
+
+        cursor.execute("SELECT id FROM genero WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_genero = linha[0]
+            cursor.execute("SELECT album_id FROM genero_album WHERE genero_id = %s;",(id_genero,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome ASC;",(id_album,))
+                i=0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i + 1
+                if i == 0:
+                    print("Não existem albuns desse género")
+                    menu.menu_pesquisa(user)
+                menu.menu_detalhes(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_artista_asc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome do artista: ")
+
+        cursor.execute("SELECT id FROM artista WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_artista = linha[0]
+            cursor.execute("SELECT album_id FROM artista_album WHERE artista_id = %s;",(id_artista,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome ASC;",(id_album,))
+                i=0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i + 1
+                if i == 0:
+                    print("Não existem albuns desse artista")
+                    menu.menu_pesquisa(user)
+                menu.menu_detalhes(user)
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+def pesquisa_artista_desc(user):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+
+        op1 = input("Insira o nome do artista: ")
+
+        cursor.execute("SELECT id FROM artista WHERE nome LIKE '%"+op1+"%';")
+        for linha in cursor.fetchall():
+            id_artista = linha[0]
+            cursor.execute("SELECT album_id FROM artista_album WHERE artista_id = %s;",(id_artista,))
+            for linha in cursor.fetchall():
+                id_album = linha[0]
+                cursor.execute("SELECT id, nome FROM album WHERE id = %s ORDER BY nome DESC;",(id_album,))
+                i=0
+                for linha in cursor.fetchall():
+                    id = linha[0]
+                    nome = linha[1]
+                    print("ID: ",id,"Nome: ",nome)
+                    i = i + 1
+                if i == 0:
+                    print("Não existem albuns desse artista")
+                    menu.menu_pesquisa(user)
+                menu.menu_detalhes(user)
+
+
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
