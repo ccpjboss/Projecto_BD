@@ -322,8 +322,9 @@ def menu_carrinho(user):
 
 
 def menu_estatisticas(user):
-    print()
+    print("************************")
     print("******Estatisticas******")
+    print("************************")
     print("1. \tTotal clientes")
     print("2. \tTotal de discos")
     print("3. \tValor total dos discos em stock")
@@ -355,7 +356,8 @@ def menu_estatisticas(user):
         funcoes.total_albuns_genero()
         menu_estatisticas(user)
     elif opcao == '6':
-        print()
+        funcoes.total_albuns_editora()
+        menu_estatisticas(user)
     elif opcao == '7':
         print()
     elif opcao == '8':

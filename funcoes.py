@@ -1208,3 +1208,39 @@ def total_albuns_genero():
         if(connection):
             cursor.close()
             connection.close()
+
+def total_albuns_editora():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        editora_id = []
+        editora_nome = []
+        total_albuns = 0
+        total_exemplares = 0
+        cursor.execute("SELECT * FROM editora;")
+        for linha in cursor.fetchall():
+            editora_nome.append(linha[0])
+            editora_id.append(linha[1])
+
+        for i in range(0,len(editora_id)):
+            cursor.execute("SELECT * FROM album WHERE editora_id=%s;",(editora_id[i],))
+            total_albuns = cursor.rowcount
+            cursor.execute("SELECT n_stock FROM album WHERE editora_id = %s;",(editora_id[i],))
+            for linha in cursor.fetchall():
+                total_exemplares += linha[0]
+            print(editora_nome[i],": ", total_albuns, "Exemplares: ",total_exemplares)
+            total_albuns = 0
+            total_exemplares = 0
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
