@@ -1172,3 +1172,32 @@ def valor_vendas():
         if(connection):
             cursor.close()
             connection.close()
+    
+def total_albuns_genero():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        generos_id = []
+        generos_nome = []
+        cursor.execute("SELECT * FROM genero;")
+        for linha in cursor.fetchall():
+            generos_id.append(linha[0])
+            generos_nome.append(linha[1])
+
+        for i in range(0,len(generos_id)):
+            cursor.execute("SELECT * FROM genero_album WHERE genero_id=%s;",(generos_id[i],))
+            print(generos_nome[i],": ", cursor.rowcount)
+        
+    #except (Exception, psycopg2.Error) as error:
+        #print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
