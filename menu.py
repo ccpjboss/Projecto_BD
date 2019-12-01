@@ -273,10 +273,11 @@ def menu_acoes_admin2(user):
     print("1. \tCorrigir preços")
     print("2. \tVer historico de preços")
     print("3. \tRemover")
-    print("4. \tVoltar ao menu principal")
+    print("4. \tAdicionar stock a um album")
+    print("5. \tVoltar ao menu principal")
     while True:
         opcao = input("Insira uma opcão: ")
-        if opcao not in ['1', '2', '3', '4']:
+        if opcao not in ['1', '2', '3', '4', '5']:
             print("Insira uma opcão valida")
         else:
             break
@@ -290,6 +291,9 @@ def menu_acoes_admin2(user):
         funcoes.remove_album(user)
         menu_admin(user)
     elif opcao == '4':
+        funcoes.update_quanitdade()
+        menu_admin(user)
+    elif opcao == '5':
         menu_admin(user)
 
 

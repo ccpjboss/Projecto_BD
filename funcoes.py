@@ -781,6 +781,50 @@ def insere_musica_album(id_album,id_musica):
         if(connection):
             cursor.close()
             connection.close()
+def update_quanitdade():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        id_album = []
+        cursor.execute("SELECT id FROM album WHERE em_stock = true")
+        for linha in cursor.fetchall():
+            id_album.append(linha[0])
+        print(id_album)
+        while True:
+            id = int(input("Insira o id do álbum: "))
+            if id not in id_album:
+                print("Não é possivel selecionar esse álbum")
+            else:
+                break
+        cursor.execute("SELECT n_stock FROM album WHERE id = %s;",(id,))
+        for linha in cursor.fetchall():
+            stock_atual = linha[0]
+            print("O stock atual é: ",stock_atual)
+        while True:
+            aumento = int(input("Quanto quer adicionar: "))
+            if aumento == 0:
+                print("Valor invalido!")
+            else:
+                break
+        cursor.execute("UPDATE album SET n_stock = %s + %s WHERE id =%s;",(stock_atual,aumento,id))
+        connection.commit()
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record updated successfully")
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+    
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
 
 def visualiza_albuns_stock(user):
     try:
