@@ -352,7 +352,8 @@ def menu_estatisticas(user):
         funcoes.valor_vendas()
         menu_estatisticas(user)
     elif opcao == '5':
-        print()
+        funcoes.total_albuns_genero()
+        menu_estatisticas(user)
     elif opcao == '6':
         print()
     elif opcao == '7':
