@@ -167,37 +167,66 @@ def menu_admin(user):
         # Vai buscar o id da editora e guarda
         id_editora = funcoes.get_id_editora(album_editora)
 
+        id_artistas = []  # lista com o id das musicas
         while True:
-            album_artista = input("Artista: ")
-            if album_artista == '':
-                print("Não insira um campo vazio")
-            else:
-                break
-        id_artista = funcoes.get_id_artista(album_artista)
+            try:
+                n = int(input("Quantos artistas tem o album: "))
+                if n == 0:
+                    print("O album não pode ter 0 artistas!")
+                else:
+                    break
+            except ValueError:
+                print("Tem de inserir um numero!")
 
-        if id_artista == None:
-            funcoes.cria_artista(album_artista)
-        id_artista = funcoes.get_id_artista(album_artista)
+        for i in range(0, n):
+            while True:
+                nome_artista = input("Artista: ")
+                if nome_artista == '':
+                    print("Não insira um campo vazio")
+                else:
+                    if funcoes.get_id_artista(nome_artista) == None:
+                        funcoes.cria_artista(nome_artista)
+                        id_artistas.append(
+                            funcoes.get_id_artista(nome_artista))
+                    else:
+                        id_artistas.append(
+                            funcoes.get_id_artista(nome_artista))
+                    break
 
+        id_generos = []  # lista com o id das musicas
         while True:
-            album_genero = input("Genero: ")
-            if album_genero == '':
-                print("Não insira um campo vazio")
-            else:
-                break
-        id_genero = funcoes.get_id_genero(album_genero)
+            try:
+                n = int(input("Quantos generos tem o album: "))
+                if n == 0:
+                    print("O album não pode ter 0 generos!")
+                else:
+                    break
+            except ValueError:
+                print("Tem de inserir um numero!")
 
-        if id_genero == None:
-            funcoes.cria_genero(album_genero)
-        id_genero = funcoes.get_id_genero(album_genero)
+        for i in range(0, n):
+            while True:
+                nome_genero = input("Genero: ")
+                if nome_genero == '':
+                    print("Não insira um campo vazio")
+                else:
+                    if funcoes.get_id_genero(nome_genero) == None:
+                        funcoes.cria_genero(nome_genero)
+                        id_generos.append(funcoes.get_id_genero(nome_genero))
+                    else:
+                        id_generos.append(funcoes.get_id_genero(nome_genero))
+                    break
 
         id_musicas = []  # lista com o id das musicas
         while True:
-            n = int(input("Quantas musicas tem o album: "))
-            if n == 0:
-                print("O album não pode ter 0 musicas!")
-            else:
-                break
+            try:
+                n = int(input("Quantas musicas tem o album: "))
+                if n == 0:
+                    print("O album não pode ter 0 musicas!")
+                else:
+                    break
+            except ValueError:
+                print("Tem de inserir um numero!")
 
         for i in range(0, n):
             while True:
@@ -213,8 +242,11 @@ def menu_admin(user):
                            album_data_edicao, id_editora)
         id_album = funcoes.get_id_album(album_nome)
 
-        funcoes.insere_artista_album(id_album, id_artista)
-        funcoes.insere_genero_album(id_album, id_genero)
+        for i in id_generos:
+            funcoes.insere_genero_album(id_album, i)
+
+        for i in id_artistas:
+            funcoes.insere_artista_album(id_album, i)
 
         for i in id_musicas:
             funcoes.insere_musica_album(id_album, i)
