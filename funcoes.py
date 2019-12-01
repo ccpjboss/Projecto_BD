@@ -250,7 +250,7 @@ def adicionar_carrinho(user):
             quant = quant + op2
 
             if finalizada is False:
-                cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s AND finalizada = false;",(quant,val, op1))
+                cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email= %s;",(quant,val, op1,user))
                 connection.commit()
             else:
                 valor = op2 * preco
@@ -263,7 +263,7 @@ def adicionar_carrinho(user):
                             "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);",(op2,valor,user,op1))
             connection.commit()
 
-        print("Após esta operação o valor total do seu carrinho é: ", valor_total(), "€")
+        print("Após esta operação o valor total do seu carrinho é: ", valor_total(user), "€")
         menu.menu_carrinho(user)
 
 
@@ -297,7 +297,7 @@ def remover_carrinho(user):
             else:
                 break
 
-        cursor.execute("SELECT album_id FROM compra WHERE finalizada = false;")
+        cursor.execute("SELECT album_id FROM compra WHERE finalizada = false AND cliente_utilizador_email = %s;",(user,))
         album_id = []
         for linha in cursor.fetchall():
             album_id.append(str(linha[0]))
@@ -306,7 +306,7 @@ def remover_carrinho(user):
             print("O album que pretende remover não se encontra no carrinho")
             menu.menu_carrinho(user)
 
-        cursor.execute("SELECT quantidade, valor FROM compra WHERE album_id = %s AND finalizada = false;", (op1,))
+        cursor.execute("SELECT quantidade, valor FROM compra WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email = %s;", (op1,user))
         quant = 0
         val = 0
         for linha in cursor.fetchall():
@@ -319,15 +319,15 @@ def remover_carrinho(user):
             else:
                 break
         if op2 == quant:
-            cursor.execute("DELETE FROM compra WHERE album_id = %s AND finalizada = false;",(op1,))
+            cursor.execute("DELETE FROM compra WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email = %s;",(op1,user))
             connection.commit()
             menu.menu_carrinho(user)
         quant = quant-op2
         valor1 = preco*op2
         val = val - valor1
-        cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s AND finalizada = false;",(quant,val,op1))
+        cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email = %s;",(quant,val,op1,user))
         connection.commit()
-        print("Após esta operação o valor total do seu carrinho é: ", valor_total(), "€")
+        print("Após esta operação o valor total do seu carrinho é: ", valor_total(user), "€")
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -349,7 +349,7 @@ def ver_carrinho(user):
 
         cursor = connection.cursor()
         print()
-        cursor.execute("SELECT album_id, quantidade, valor FROM compra WHERE finalizada = false;")
+        cursor.execute("SELECT album_id, quantidade, valor FROM compra WHERE finalizada = false AND cliente_utilizador_email=%s;",(user,))
 
         for linha in cursor.fetchall():
             album_id = linha[0]
@@ -363,10 +363,10 @@ def ver_carrinho(user):
             print("Quantidade: ", quant)
             print("Valor: ",val)
             print("----//----")
-        if valor_total() == 0:
+        if valor_total(user) == 0:
             print("O seu carrinho está vazio")
         else:
-            print("O valor total do seu carrinho é: ", valor_total(),"€")
+            print("O valor total do seu carrinho é: ", valor_total(user),"€")
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -377,7 +377,7 @@ def ver_carrinho(user):
             cursor.close()
             connection.close()
 
-def valor_total():
+def valor_total(user):
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -386,7 +386,7 @@ def valor_total():
                                       database="Projecto_BD")
         cursor = connection.cursor()
 
-        cursor.execute("SELECT valor FROM compra WHERE finalizada = false;")
+        cursor.execute("SELECT valor FROM compra WHERE finalizada = false AND cliente_utilizador_email = %s;",(user,))
 
         valor = 0
         for linha in cursor.fetchall():
@@ -410,7 +410,7 @@ def finalizar_compra(user):
                                       database="Projecto_BD")
         cursor = connection.cursor()
 
-        cursor.execute("SELECT saldo, valor FROM cliente, compra;")
+        cursor.execute("SELECT saldo, valor FROM cliente, compra WHERE utilizador_email = %s AND cliente_utilizador_email = %s AND finalizada = false;",(user,user))
 
         valor = 0
         for linha in cursor.fetchall():
@@ -423,11 +423,11 @@ def finalizar_compra(user):
             menu.menu_carrinho(user)
 
         sal = saldo - valor
-        cursor.execute("UPDATE cliente SET saldo =%s;",(sal,))
+        cursor.execute("UPDATE cliente SET saldo =%s WHERE utilizador_email = %s;",(sal,user))
         connection.commit()
-        cursor.execute("UPDATE compra SET data2 = now() WHERE finalizada = false;")
+        cursor.execute("UPDATE compra SET data2 = now() WHERE finalizada = false AND cliente_utilizador_email = %s;",(user,))
         connection.commit()
-        cursor.execute("UPDATE compra SET finalizada = true;")
+        cursor.execute("UPDATE compra SET finalizada = true WHERE cliente_utilizador_email = %s;",(user,))
         atualiza_stock()
         connection.commit()
         print("Compra Bem sucedida")
@@ -1046,7 +1046,7 @@ def historico_compra(user):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        cursor.execute("SELECT id, data, valor, quantidade, data2, album_id FROM compra WHERE finalizada = true")
+        cursor.execute("SELECT id, data, valor, quantidade, data2, album_id FROM compra WHERE finalizada = true AND cliente_utilizador_ email = %s;",(user,))
         for linha in cursor.fetchall():
             id = linha[0]
             data = linha[1]
