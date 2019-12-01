@@ -359,6 +359,7 @@ def menu_estatisticas(user):
         funcoes.total_albuns_editora()
         menu_estatisticas(user)
     elif opcao == '7':
-        print()
+        funcoes.albuns_falta_stock()
+        menu_estatisticas(user)
     elif opcao == '8':
         menu_admin(user)

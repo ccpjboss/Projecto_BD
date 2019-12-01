@@ -1244,3 +1244,28 @@ def total_albuns_editora():
         if(connection):
             cursor.close()
             connection.close()
+
+def albuns_falta_stock():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT nome, id, n_stock FROM album WHERE n_stock<5;")
+        if cursor.rowcount == 0:
+            print("Não existe nenhum album com falta de stock!")
+            return
+            
+        for linha in cursor.fetchall():
+            print("Nome: ",linha[0],"ID: ",linha[1],"Exemplares: ",linha[2])
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
