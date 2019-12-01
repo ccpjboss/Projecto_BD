@@ -1184,6 +1184,8 @@ def total_albuns_genero():
         cursor = connection.cursor()
         generos_id = []
         generos_nome = []
+        total_albuns = 0
+        total_exemplares = 0
         cursor.execute("SELECT * FROM genero;")
         for linha in cursor.fetchall():
             generos_id.append(linha[0])
@@ -1191,10 +1193,15 @@ def total_albuns_genero():
 
         for i in range(0,len(generos_id)):
             cursor.execute("SELECT * FROM genero_album WHERE genero_id=%s;",(generos_id[i],))
-            print(generos_nome[i],": ", cursor.rowcount)
-        
-    #except (Exception, psycopg2.Error) as error:
-        #print("Error ", error)
+            total_albuns = cursor.rowcount
+            cursor.execute("SELECT genero_album.genero_id,genero_album.album_id,album.n_stock FROM genero_album,album WHERE genero_id= %s AND album.id = genero_album.album_id;",(generos_id[i],))
+            for linha in cursor.fetchall():
+                total_exemplares += linha[2]
+            print(generos_nome[i],": ", total_albuns, "Exemplares: ", total_exemplares)
+            total_albuns = 0
+            total_exemplares = 0
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
 
     finally:
         # closing database connection.
