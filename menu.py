@@ -225,7 +225,8 @@ def menu_admin(user):
         funcoes.visualiza_albuns_stock(user)
         menu_acoes_admin(user)
     elif opcao == '3':
-        print()
+        funcoes.envia_mensagem()
+        menu_admin(user)
     elif opcao == '4':
         funcoes.aumenta_saldo(user)
         menu_admin(user)

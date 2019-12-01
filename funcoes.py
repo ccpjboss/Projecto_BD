@@ -1313,3 +1313,41 @@ def albuns_falta_stock():
         if(connection):
             cursor.close()
             connection.close()
+
+def envia_mensagem():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        while True:
+            assunto= input("Qual é o assunto da mensagem: ")
+            if assunto == '':
+                print("Não pode inserir um assunto vazio")
+            else:
+                break
+
+        while True:
+            texto= input("Qual é o texto da mensagem: ")
+            if assunto == '':
+                print("Não pode inserir um texto vazio")
+            else:
+                break
+        cursor.execute("INSERT INTO mensagem VALUES (nextval('mensagem_id_sequence'),%s,%s,now());",(texto,assunto))
+        connection.commit()
+        
+        count = cursor.rowcount
+        # DEBUG
+        print(count, "Record inserted successfully into mensagens")
+        
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
