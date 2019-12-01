@@ -1150,3 +1150,25 @@ def valor_discos_stock():
         if(connection):
             cursor.close()
             connection.close()
+
+def valor_vendas():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT sum(valor) FROM compra WHERE finalizada=true;")
+        for linha in cursor.fetchall():
+            print("O valor total de das vendas é ", linha[0])
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
