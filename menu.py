@@ -105,6 +105,7 @@ def menu_cliente(user):
         funcoes.historico_compra(user)
     elif opcao == '4':
         print()
+        funcoes.mensagem_cliente(user)
     elif opcao == '5':
         print()
     elif opcao == '6':
@@ -368,3 +369,18 @@ def menu_estatisticas(user):
         menu_estatisticas(user)
     elif opcao == '8':
         menu_admin(user)
+
+def caixa_entrada(user):
+    print()
+    print("1.\tLer Mensagem")
+    print("2.\tSair")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        funcoes.ler_mensagem(user)
+    elif opcao == '2':
+        menu_cliente(user)
