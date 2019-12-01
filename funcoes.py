@@ -942,12 +942,12 @@ def ver_historico_preco():
                 print("Não é possivel selecionar esse álbum")
             else:
                 break
-        cursor.execute("SELECT historico_preco.preco,historico_preco.data, album.nome FROM album, historico_preco WHERE album.id = %s;",(id,))
+        cursor.execute("SELECT preco,data FROM  historico_preco WHERE album_id = %s;",(id,))
         for linha in cursor.fetchall():
             preco = linha[0]
             data = linha[1]
-            nome = linha[2]
-            print("Nome:\t",nome, "\tPreco: ",preco,"Data: \t",data)
+    
+            print("Preco: ",preco,"Data: \t",data)
         
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
