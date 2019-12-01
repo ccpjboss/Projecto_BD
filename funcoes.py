@@ -1099,3 +1099,32 @@ def total_clientes():
         if(connection):
             cursor.close()
             connection.close()
+
+def total_albuns():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM album")
+        count = cursor.rowcount
+        print("Nº de albuns registados no sistema: ", count)
+        
+        total_stock = 0
+        cursor.execute("SELECT n_stock FROM album")
+        for linha in cursor.fetchall():
+            total_stock += linha[0]
+        
+        print("Nº de exemplares no sistema: ", total_stock)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()

@@ -343,7 +343,8 @@ def menu_estatisticas(user):
         funcoes.total_clientes()
         menu_estatisticas(user)
     elif opcao == '2':
-        print()
+        funcoes.total_albuns()
+        menu_estatisticas(user)
     elif opcao == '3':
         print()
     elif opcao == '4':
