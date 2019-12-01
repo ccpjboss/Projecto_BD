@@ -346,7 +346,8 @@ def menu_estatisticas(user):
         funcoes.total_albuns()
         menu_estatisticas(user)
     elif opcao == '3':
-        print()
+        funcoes.valor_discos_stock()
+        menu_estatisticas(user)
     elif opcao == '4':
         print()
     elif opcao == '5':
