@@ -1138,13 +1138,9 @@ def valor_discos_stock():
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        total=0
-        cursor.execute("SELECT preco,n_stock FROM album WHERE em_stock=true;")
+        cursor.execute("SELECT sum(n_stock*preco) FROM album WHERE em_stock=true;")
         for linha in cursor.fetchall():
-            preco=linha[0]
-            quantidade=linha[1]
-            total += quantidade*preco
-        print("O valor total de todos os albuns é ", total)
+            print("O valor total de todos os albuns é ", linha[0])
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
