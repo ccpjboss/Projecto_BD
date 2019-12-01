@@ -1091,8 +1091,8 @@ def total_clientes():
         count = cursor.rowcount
         print("Nº de cliente registados: ", count)
 
-    #except (Exception, psycopg2.Error) as error:
-        #print("Error ", error)
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
 
     finally:
         # closing database connection.
