@@ -55,7 +55,6 @@ def insere_novo_user(user_email, user_passwd, user_nome):
         if(connection):
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
 
 def check_login(input_email, input_password):
     try:
@@ -805,12 +804,9 @@ def update_quanitdade():
         for linha in cursor.fetchall():
             stock_atual = linha[0]
             print("O stock atual é: ",stock_atual)
-        while True:
-            aumento = int(input("Quanto quer adicionar: "))
-            if aumento == 0:
-                print("Valor invalido!")
-            else:
-                break
+
+        aumento = int(input("Quanto quer adicionar: "))
+
         cursor.execute("UPDATE album SET n_stock = %s + %s WHERE id =%s;",(stock_atual,aumento,id))
         connection.commit()
         count = cursor.rowcount
@@ -1053,12 +1049,7 @@ def aumenta_saldo(user):
             else:
                 break
         
-        while True:
-            aumento = float(input("Quanto deseja aumentar: "))
-            if aumento == 0:
-                print("Não é possivel adicionar 0 euros...")
-            else:
-                break
+        aumento = float(input("Quanto deseja aumentar: "))
         cursor.execute("SELECT saldo FROM cliente WHERE utilizador_email = %s;",(email_input,))
         for linha in cursor.fetchall():
             saldo_antigo = linha[0]
