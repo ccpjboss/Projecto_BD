@@ -1335,6 +1335,20 @@ def envia_mensagem():
         count = cursor.rowcount
         # DEBUG
         print(count, "Record inserted successfully into mensagens")
+
+        clientes = []
+        cursor.execute("SELECT utilizador_email FROM cliente")
+        for linha in cursor.fetchall():
+            clientes.append(linha[0])
+        
+        cursor.execute("SELECT id FROM mensagem ORDER BY id DESC LIMIT 1")
+        id_mensagem = cursor.fetchone()
+        for i in clientes:
+            cursor.execute("INSERT INTO leitura VALUES(false,%s,%s);",(id_mensagem[0],i))
+            connection.commit()
+            count = cursor.rowcount
+            # DEBUG
+            print(count, "Record inserted successfully into leitura")
         
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
@@ -1354,30 +1368,42 @@ def mensagem_cliente(user):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-
+        id_mensagens = []
         print("********************************")
         print("********Caixa de Entrada********")
         print("********************************")
-        cursor.execute("SELECT id, assunto, data FROM mensagem "
-                       "WHERE id IN (SELECT mensagem_id FROM leitura WHERE cliente_utilizador_email = %s)"
-                       "ORDER BY data;",(user,))
+        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = false AND leitura.cliente_utilizador_email = %s;",(user,))
+        count = cursor.rowcount
+        if count == 0:
+            print("Caixa de entrada vazia")
         for linha in cursor.fetchall():
             id = linha[0]
+            id_mensagens.append(linha[0])
             assunto = linha[1]
             data = linha[2]
-            print("ID: ",id)
-            print("Assunto: ", assunto)
-            print("Data: ", data)
-            cursor.execute("SELECT lida FROM leitura WHERE mensagem_id = %s AND cliente_utilizador_email = %s;",(id,user))
-            for linha in cursor.fetchall():
-                lida = linha[0]
-                if lida is True:
-                    print("Lida: Sim")
-                else:
-                    print("Lida: Não")
-            print("-------//-------")
-        menu.caixa_entrada(user)
-
+            print("ID: ",id,"Assunto: ",assunto,"Data: ",data)
+            print("----------------------------------------")
+        print("1. \tLer mensagem")
+        print("2. \tLidas")
+        print("3. \tMenu inicial")
+        while True:
+            opcao = input("Insira a opção: ")
+            if opcao not in ['1', '2', '3']:
+                print("Insira uma opção valida!")
+            else:
+                break
+        if opcao == '1':
+            if count == 0:
+                print("Não tem mensagens por ler.")
+                mensagem_cliente(user)
+            else:
+                ler_mensagem(user,id_mensagens)
+                mensagem_cliente(user)
+        if opcao == '2':
+            mensagens_n_lidas(user)
+            mensagem_cliente(user)
+        if opcao == '3':
+            menu.menu_cliente(user)
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
@@ -1388,7 +1414,7 @@ def mensagem_cliente(user):
             cursor.close()
             connection.close()
 
-def ler_mensagem(user):
+def mensagens_n_lidas(user):
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -1397,31 +1423,83 @@ def ler_mensagem(user):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        cursor.execute("SELECT mensagem_id FROM leitura WHERE cliente_utilizador_email = %s;",(user,))
-        mensagem_id=[]
-        for linha in cursor.fetchall():
-            mensagem_id.append(str(linha[0]))
-        while True:
-            op1 = input("Insira o ID da mensagem que pretende ler: ")
-            if op1 not in mensagem_id:
-                print("Insira um ID válido!")
-            else:
-                break
-        cursor.execute("SELECT id, texto, assunto, data FROM mensagem WHERE id = %s",(op1,))
+        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = true AND leitura.cliente_utilizador_email = %s;",(user,))
+        if cursor.rowcount == 0:
+            print("Não tem mensagens lidas")
+        
+        id_mensagens = []
+
         for linha in cursor.fetchall():
             id = linha[0]
-            texto = linha[1]
-            assunto = linha[2]
-            data = linha[3]
-            print()
-            print("ID: ",id)
-            print("Data: ",data)
-            print("Assunto: ",assunto)
-            print("Texto: ", texto)
+            id_mensagens.append(linha[0])
+            assunto = linha[1]
+            data = linha[2]
+            print("ID: ",id,"Assunto: ",assunto,"Data: ",data)
+            print("----------------------------------------")
 
-        cursor.execute("UPDATE leitura SET lida = true WHERE mensagem_id = %s AND cliente_utilizador_email = %s;",(op1,user))
+        while True:
+            id = int(input("Insira o id da mensagem que quer ler: "))
+            if  id not in id_mensagens:
+                print("Não é possivel ler essa mensagem")
+            else:
+                break
+        
+        cursor.execute("SELECT assunto,texto FROM mensagem WHERE id = %s;", (id,))
+
+        for linha in cursor.fetchall():
+            print("Assunto: ",linha[0])
+            print()
+            print(linha[1])
+            print("---------------FIM------------------------")
+        
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
+
+    except (Exception, psycopg2.Error) as error:
+         print("Error ", error)
+
+    finally:
+        # closing database connection.
+        if (connection):
+            cursor.close()
+            connection.close()
+
+
+def ler_mensagem(user,id_mensagens):
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="localhost",
+                                      port="5432",
+                                      database="Projecto_BD")
+
+        cursor = connection.cursor()
+        while True:
+            id = int(input("Insira o id da mensagem que quer ler: "))
+            if  id not in id_mensagens:
+                print("Não é possivel ler essa mensagem")
+            else:
+                break
+        cursor.execute("SELECT assunto,texto FROM mensagem WHERE id = %s;", (id,))
+        for linha in cursor.fetchall():
+            print("Assunto: ",linha[0])
+            print()
+            print(linha[1])
+        
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
+        
+        cursor.execute("UPDATE leitura SET lida = true WHERE mensagem_id = %s AND cliente_utilizador_email = %s;", (id,user))
         connection.commit()
-        menu.caixa_entrada(user)
+        count = cursor.rowcount
+        #DEBUG
+        print(count," record updated succesfully.")
+
+        
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
