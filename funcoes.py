@@ -180,6 +180,11 @@ def detalhes_album(user):
             print("Exemplares em Stock:", n_stock)
         else:
             print("De momento este album não existe em stock")
+        
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
         menu.menu_cliente(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -839,7 +844,11 @@ def visualiza_albuns_stock(user):
             nome = linha[1]
             n_stock = linha[2]
             print("ID:\t",id, "\tNome: ",nome,"\tQuantidade: \t",n_stock)
-
+        
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -947,6 +956,11 @@ def ver_historico_preco():
     
             print("Preco: ",preco,"Data: \t",data)
         
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
+            
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -1102,6 +1116,11 @@ def historico_compra(user):
             print("Data em que foi adicionado ao carrinho: ", data)
             print("Data em que foi comprado: ", data2)
             print("-------------------//-------------------------")
+        
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
         menu.menu_cliente(user)
 
 
@@ -1395,6 +1414,10 @@ def mensagem_cliente(user):
         if opcao == '1':
             if count == 0:
                 print("Não tem mensagens por ler.")
+                while True:
+                    move_on = input("Enter para continuar")
+                    if move_on == '':
+                        break
                 mensagem_cliente(user)
             else:
                 ler_mensagem(user,id_mensagens)
