@@ -409,22 +409,6 @@ def menu_estatisticas(user):
     elif opcao == '8':
         menu_admin(user)
 
-
-def caixa_entrada(user):
-    print()
-    print("1.\tLer Mensagem")
-    print("2.\tSair")
-    while True:
-        opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2']:
-            print("Insira uma opção válida!")
-        else:
-            break
-    if opcao == '1':
-        funcoes.ler_mensagem(user)
-    elif opcao == '2':
-        menu_cliente(user)
-
 def menu_pesquisa(user):
     print("********************************")
     print("************Pesquisa************")
@@ -468,7 +452,7 @@ def menu_pesquisa(user):
         if op == '1':
             funcoes.pesquisa_musica_asc(user)
         if op == '2':
-            funcoes.pesquisa_musica_des(user)
+            funcoes.pesquisa_musica_desc(user)
 
     elif opcao == '3':
         print("1.\tOrdem Ascendente")
@@ -482,7 +466,7 @@ def menu_pesquisa(user):
         if op == '1':
             funcoes.pesquisa_genero_asc(user)
         if op == '2':
-            funcoes.pesquisa_genero_des(user)
+            funcoes.pesquisa_genero_desc(user)
     elif opcao == '4':
         print("1.\tOrdem Ascendente")
         print("2.\tOrdem Descendente")
@@ -495,6 +479,6 @@ def menu_pesquisa(user):
         if op == '1':
             funcoes.pesquisa_artista_asc(user)
         if op == '2':
-            funcoes.pesquisa_artista_des(user)
+            funcoes.pesquisa_artista_desc(user)
     elif opcao == '5':
         menu_cliente(user)
