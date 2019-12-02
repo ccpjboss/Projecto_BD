@@ -20,10 +20,11 @@ def menu_inicial():
     print("********************************")
     print("1.\tLogin")
     print("2.\tNovo ultilizador")
+    print("3.\tSair")
 
     while True:
         opcao = input("Insira a opção: ")
-        if opcao not in ['1', '2']:
+        if opcao not in ['1', '2', '3']:
             print("Insira uma opção valida!")
         else:
             break
@@ -74,6 +75,8 @@ def menu_inicial():
                 break
         funcoes.insere_novo_user(user_email, user_password, user_nome)
         menu_inicial()
+    if opcao == '3':
+        exit()
 
 
 def menu_cliente(user):
@@ -109,8 +112,7 @@ def menu_cliente(user):
     elif opcao == '5':
         menu_pesquisa(user)
     elif opcao == '6':
-        print("Obrigado e volte sempre!")
-        exit()
+        menu_inicial()
 
 
 def menu_admin(user):
@@ -135,17 +137,23 @@ def menu_admin(user):
             else:
                 break
         while True:
-            album_preco = float(input("Preço "))
-            if album_preco == 0:
-                print("Erro preço não pode ser zero")
-            else:
-                break
+            try:
+                album_preco = float(input("Preço "))
+                if album_preco == 0:
+                    print("Erro preço não pode ser zero")
+                else:
+                    break
+            except ValueError:
+                print("Tem de inserir um numero")
         while True:
-            album_nstock = int(input("Qual vai ser o stock inicial: "))
-            if album_nstock == 0:
-                print("Não pode ser 0")
-            else:
-                break
+            try:
+                album_nstock = int(input("Qual vai ser o stock inicial: "))
+                if album_nstock == 0:
+                    print("Não pode ser 0")
+                else:
+                    break
+            except ValueError:
+                print("Tem de inserir um numero")
         while True:
             print("Insira no formato yyyy-mm-dd")
             album_data_edicao = input("Data de edição: ")
@@ -266,8 +274,7 @@ def menu_admin(user):
     elif opcao == '5':
         menu_estatisticas(user)
     elif opcao == '6':
-        print("Xau")
-        exit()
+        menu_inicial()
 
 
 def menu_detalhes(user):
@@ -401,6 +408,7 @@ def menu_estatisticas(user):
         menu_estatisticas(user)
     elif opcao == '8':
         menu_admin(user)
+
 
 def caixa_entrada(user):
     print()
