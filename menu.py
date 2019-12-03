@@ -110,7 +110,8 @@ def menu_cliente(user):
         print()
         funcoes.mensagem_cliente(user)
     elif opcao == '5':
-        menu_pesquisa(user)
+        pesq = sist_hist()
+        menu_pesquisa(user, pesq)
     elif opcao == '6':
         menu_inicial()
 
@@ -413,7 +414,7 @@ def menu_pesquisa(user):
     print("********************************")
     print("************Pesquisa************")
     print("********************************")
-    print("Escolhe o critério de pesquisa")
+    print("Escolha o critério de pesquisa")
     print("1.\tNome Album")
     print("2.\tNome Música")
     print("3.\tGénero")
@@ -427,58 +428,86 @@ def menu_pesquisa(user):
             break
 
     if opcao == '1':
-        print("1.\tOrdem Ascendente")
-        print("2.\tOrdem Descendente")
-        while True:
-            op=input("Insira a opção: ")
-            if op not in ['1','2']:
-                print("Insira uma opção válida!")
-            else:
-                break
-        if op == '1':
-            funcoes.pesquisa_album_asc(user)
-        if op == '2':
-            funcoes.pesquisa_album_des(user)
-
+        crit = pesquisa_ordenar(user)
+        ord = asc_desc()
+        if pesq == 1:
+            funcoes.pesquisa_album(user, crit, ord)
+        else:
+            funcoes.pesquisa_album_historico(user,crit,ord)
     elif opcao == '2':
-        print("1.\tOrdem Ascendente")
-        print("2.\tOrdem Descendente")
-        while True:
-            op = input("Insira a opção: ")
-            if op not in ['1', '2']:
-                print("Insira uma opção válida!")
-            else:
-                break
-        if op == '1':
-            funcoes.pesquisa_musica_asc(user)
-        if op == '2':
-            funcoes.pesquisa_musica_desc(user)
-
+        crit = pesquisa_ordenar(user)
+        ord = asc_desc()
+        if pesq == 1:
+            funcoes.pesquisa_musica(user, crit, ord)
+        else:
+            funcoes.pesquisa_musica_historico(user,crit,ord)
     elif opcao == '3':
-        print("1.\tOrdem Ascendente")
-        print("2.\tOrdem Descendente")
-        while True:
-            op = input("Insira a opção: ")
-            if op not in ['1', '2']:
-                print("Insira uma opção válida!")
-            else:
-                break
-        if op == '1':
-            funcoes.pesquisa_genero_asc(user)
-        if op == '2':
-            funcoes.pesquisa_genero_desc(user)
+        crit = pesquisa_ordenar(user)
+        ord = asc_desc()
+        if pesq == 1:
+            funcoes.pesquisa_genero(user, crit, ord)
+        else:
+            funcoes.pesquisa_genero_historico(user,crit,ord)
     elif opcao == '4':
-        print("1.\tOrdem Ascendente")
-        print("2.\tOrdem Descendente")
-        while True:
-            op = input("Insira a opção: ")
-            if op not in ['1', '2']:
-                print("Insira uma opção válida!")
-            else:
-                break
-        if op == '1':
-            funcoes.pesquisa_artista_asc(user)
-        if op == '2':
-            funcoes.pesquisa_artista_desc(user)
+        crit = pesquisa_ordenar(user)
+        ord = asc_desc()
+        if pesq == 1:
+            funcoes.pesquisa_artista(user,crit,ord)
+        else:
+            funcoes.pesquisa_artista_historico(user,crit,ord)
+
     elif opcao == '5':
         menu_cliente(user)
+
+def pesquisa_ordenar(user):
+    print()
+    print("Escolha o critério de ordenação")
+    print("1.\tID do album")
+    print("2.\tNome do album")
+    print("3.\tPreço do album")
+    print("4.\tVoltar atrás")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2', '3', '4']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        return 'id'
+    if opcao == '2':
+        return 'nome'
+    if opcao == '3':
+        return 'preco'
+    if opcao == '4':
+        menu_pesquisa(user)
+
+def asc_desc():
+    print("Escolha uma ordem")
+    print("1.\tAscendente")
+    print("2.\tDescendente")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        return 'ASC'
+    if opcao == '2':
+        return 'DESC'
+
+def sist_hist():
+    print("Onde pretende pesquisar?")
+    print("1.\tSistema")
+    print("2.\tHistorico")
+    while True:
+        opcao = input("Insira a opção: ")
+        if opcao not in ['1', '2']:
+            print("Insira uma opção válida!")
+        else:
+            break
+    if opcao == '1':
+        return 1
+    if opcao == '2':
+        return 2
+
