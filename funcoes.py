@@ -1398,7 +1398,7 @@ def mensagem_cliente(user):
         print("********************************")
         print("********Caixa de Entrada********")
         print("********************************")
-        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = false AND leitura.cliente_utilizador_email = %s;",(user,))
+        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = false AND leitura.mensagem_id = mensagem.id AND leitura.cliente_utilizador_email = %s;",(user,))
         count = cursor.rowcount
         if count == 0:
             print("Caixa de entrada vazia")
@@ -1453,7 +1453,7 @@ def mensagens_n_lidas(user):
                                       database="Projecto_BD")
 
         cursor = connection.cursor()
-        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = true AND leitura.cliente_utilizador_email = %s;",(user,))
+        cursor.execute("SELECT mensagem.id,mensagem.assunto,mensagem.data FROM mensagem,leitura WHERE leitura.lida = true AND leitura.mensagem_id = mensagem.id AND leitura.cliente_utilizador_email = %s;",(user,))
         if cursor.rowcount == 0:
             print("Não tem mensagens lidas")
         
