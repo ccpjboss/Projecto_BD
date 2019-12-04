@@ -410,7 +410,8 @@ def menu_estatisticas(user):
     elif opcao == '8':
         menu_admin(user)
 
-def menu_pesquisa(user):
+
+def menu_pesquisa(user, pesq):
     print("********************************")
     print("************Pesquisa************")
     print("********************************")
@@ -428,38 +429,39 @@ def menu_pesquisa(user):
             break
 
     if opcao == '1':
-        crit = pesquisa_ordenar(user)
+        crit = pesquisa_ordenar(user, pesq)
         ord = asc_desc()
         if pesq == 1:
             funcoes.pesquisa_album(user, crit, ord)
         else:
-            funcoes.pesquisa_album_historico(user,crit,ord)
+            funcoes.pesquisa_album_historico(user, crit, ord)
     elif opcao == '2':
-        crit = pesquisa_ordenar(user)
+        crit = pesquisa_ordenar(user, pesq)
         ord = asc_desc()
         if pesq == 1:
             funcoes.pesquisa_musica(user, crit, ord)
         else:
-            funcoes.pesquisa_musica_historico(user,crit,ord)
+            funcoes.pesquisa_musica_historico(user, crit, ord)
     elif opcao == '3':
-        crit = pesquisa_ordenar(user)
+        crit = pesquisa_ordenar(user, pesq)
         ord = asc_desc()
         if pesq == 1:
             funcoes.pesquisa_genero(user, crit, ord)
         else:
-            funcoes.pesquisa_genero_historico(user,crit,ord)
+            funcoes.pesquisa_genero_historico(user, crit, ord)
     elif opcao == '4':
-        crit = pesquisa_ordenar(user)
+        crit = pesquisa_ordenar(user, pesq)
         ord = asc_desc()
         if pesq == 1:
-            funcoes.pesquisa_artista(user,crit,ord)
+            funcoes.pesquisa_artista(user, crit, ord)
         else:
-            funcoes.pesquisa_artista_historico(user,crit,ord)
+            funcoes.pesquisa_artista_historico(user, crit, ord)
 
     elif opcao == '5':
         menu_cliente(user)
 
-def pesquisa_ordenar(user):
+
+def pesquisa_ordenar(user, pesq):
     print()
     print("Escolha o critério de ordenação")
     print("1.\tID do album")
@@ -479,7 +481,8 @@ def pesquisa_ordenar(user):
     if opcao == '3':
         return 'preco'
     if opcao == '4':
-        menu_pesquisa(user)
+        menu_pesquisa(user, pesq)
+
 
 def asc_desc():
     print("Escolha uma ordem")
@@ -496,6 +499,7 @@ def asc_desc():
     if opcao == '2':
         return 'DESC'
 
+
 def sist_hist():
     print("Onde pretende pesquisar?")
     print("1.\tSistema")
@@ -510,4 +514,3 @@ def sist_hist():
         return 1
     if opcao == '2':
         return 2
-
