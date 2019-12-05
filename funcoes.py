@@ -1593,7 +1593,6 @@ def pesquisa_musica(user,crit,ord):
         i = 0
         for linha in cursor.fetchall():
             i = cursor.rowcount
-            album_id = linha[0]
             nome = linha[1]
             id = linha[2]
             preco = linha[3]
@@ -1631,7 +1630,6 @@ def pesquisa_genero(user,crit,ord):
         i = 0
         for linha in cursor.fetchall():
             i = cursor.rowcount
-            album_id = linha[0]
             nome = linha[1]
             id = linha[2]
             preco = linha[3]
@@ -1669,7 +1667,6 @@ def pesquisa_artista(user,crit,ord):
         i = 0
         for linha in cursor.fetchall():
             i = cursor.rowcount
-            album_id = linha[0]
             nome = linha[1]
             id = linha[2]
             preco = linha[3]
@@ -1750,7 +1747,6 @@ def pesquisa_artista_historico(user,crit,ord):
             album_id = linha[0]
             nome = linha[1]
             id_compra =  linha[2]
-            id_album = linha[3]
             data = linha[4]
             valor = linha[5]
             quant = linha[6]
@@ -1805,7 +1801,6 @@ def pesquisa_genero_historico(user,crit,ord):
             album_id = linha[0]
             nome = linha[1]
             id_compra =  linha[2]
-            id_album = linha[3]
             data = linha[4]
             valor = linha[5]
             quant = linha[6]
@@ -1860,7 +1855,6 @@ def pesquisa_musica_historico(user,crit,ord):
             album_id = linha[0]
             nome = linha[1]
             id_compra =  linha[2]
-            id_album = linha[3]
             data = linha[4]
             valor = linha[5]
             quant = linha[6]
@@ -1902,19 +1896,18 @@ def pesquisa_album_historico(user,crit,ord):
 
         op1 = input("Insira o nome do album: ")
         print()
-        cursor.execute("SELECT album.id, album.nome, compra.id "
+        cursor.execute("SELECT album.id, album.nome, compra.id, compra.data, compra.valor, compra.quantidade, compra.data2 "
                        "FROM album "
                        "INNER JOIN compra ON album.id = compra.album_id "
                        "WHERE album.nome LIKE '%"+op1+"%' "
                        "AND compra.finalizada = true AND cliente_utilizador_email = '{0}' "
-                       "ORDER BY {1} {2}".format(user,crit,ord))
+                       "ORDER BY album.{1} {2}".format(user,crit,ord))
         i = 0
         for linha in cursor.fetchall():
             i = cursor.rowcount
             album_id = linha[0]
             nome = linha[1]
             id_compra =  linha[2]
-            id_album = linha[3]
             data = linha[4]
             valor = linha[5]
             quant = linha[6]
@@ -1932,8 +1925,8 @@ def pesquisa_album_historico(user,crit,ord):
             menu.menu_cliente(user)
         menu.menu_detalhes(user)
 
-    except (Exception, psycopg2.Error) as error:
-        print("Error ", error)
+    #except (Exception, psycopg2.Error) as error:
+        #print("Error ", error)
 
     finally:
         # closing database connection.
