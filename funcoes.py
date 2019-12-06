@@ -5,28 +5,6 @@ import psycopg2.extras
 # Coneção à base de dados basica
 import menu
 
-
-def connect_db():
-    try:
-        connection = psycopg2.connect(user="postgres",
-                                      password="postgres",
-                                      host="localhost",
-                                      port="5432",
-                                      database="Projecto_BD")
-
-        cursor = connection.cursor()
-        # Print PostgreSQL Connection properties
-        print(connection.get_dsn_parameters(), "\n")
-
-        # Print PostgreSQL version
-        cursor.execute("SELECT version();")
-        record = cursor.fetchone()
-        print("You are connected to - ", record, "\n")
-
-    except (Exception, psycopg2.Error) as error:
-
-        print("Error while connecting to PostgreSQL", error)
-
 def insere_novo_user(user_email, user_passwd, user_nome):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -344,7 +322,6 @@ def remover_carrinho(user):
             cursor.close()
             connection.close()
 
-
 def ver_carrinho(user):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -486,6 +463,7 @@ def atualiza_stock():
         if (connection):
             cursor.close()
             connection.close()
+
 def get_musica_id(n):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -793,6 +771,7 @@ def insere_musica_album(id_album,id_musica):
         if(connection):
             cursor.close()
             connection.close()
+
 def update_quanitdade():
     try:
         connection = psycopg2.connect(user="postgres",
@@ -863,6 +842,7 @@ def visualiza_albuns_stock(user):
         if(connection):
             cursor.close()
             connection.close()
+
 def insere_historico_preco(user,album_id,preco):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -885,6 +865,7 @@ def insere_historico_preco(user,album_id,preco):
         if(connection):
             cursor.close()
             connection.close()
+
 def corrigir_preco(user):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -975,6 +956,7 @@ def ver_historico_preco():
         if(connection):
             cursor.close()
             connection.close()
+
 def remove_album():
     try:
         connection = psycopg2.connect(user="postgres",
@@ -1139,7 +1121,6 @@ def historico_compra(user):
         if (connection):
             cursor.close()
             connection.close()
-
 
 def total_clientes():
     try:
@@ -1496,7 +1477,6 @@ def mensagens_n_lidas(user):
             cursor.close()
             connection.close()
 
-
 def ler_mensagem(user,id_mensagens):
     try:
         connection = psycopg2.connect(user="postgres",
@@ -1572,7 +1552,6 @@ def pesquisa_album(user,crit,ord):
         if (connection):
             cursor.close()
             connection.close()
-
 
 def pesquisa_musica(user,crit,ord):
     try:
