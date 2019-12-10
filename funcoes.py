@@ -203,7 +203,7 @@ def adicionar_carrinho(user):
             print("De momento este album não se encontra em stock")
             menu.menu_carrinho(user)
 
-        cursor.execute("SELECT DISTINCT n_stock, preco FROM album WHERE album.id = %s;",(op1,))
+        cursor.execute("SELECT n_stock, preco FROM album WHERE album.id = %s;",(op1,))
         quant = 0
         preco = 0
         for linha in cursor.fetchall():
@@ -216,31 +216,24 @@ def adicionar_carrinho(user):
             else:
                 break
 
-        cursor.execute("SELECT album_id FROM compra;")
+        cursor.execute("SELECT album_id FROM compra WHERE cliente_utilizador_email = %s AND finalizada = false;",(user,))
         album_id = []
         for linha in cursor.fetchall():
             album_id.append(str(linha[0]))
 
         if op1 in album_id:
-            cursor.execute("SELECT valor, quantidade, finalizada FROM compra WHERE album_id = %s;",(op1,))
+            cursor.execute("SELECT valor, quantidade, finalizada FROM compra WHERE album_id = %s AND cliente_utilizador_email = %s;",(op1,user))
             quant = 0
             val = 0
             for linha in cursor.fetchall():
                 val = linha[0]
                 quant = linha[1]
-                finalizada = linha[2]
             valor1 = preco*op2
             val = val + valor1
             quant = quant + op2
 
-            if finalizada is False:
-                cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email= %s;",(quant,val, op1,user))
-                connection.commit()
-            else:
-                valor = op2 * preco
-                cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
-                    "VALUES(nextval('compra_id_sequence'), now(), %s, False, %s, %s, %s);", (op2, valor, user, op1))
-                connection.commit()
+            cursor.execute("UPDATE compra SET quantidade = %s, data = now(), valor = %s WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email= %s;",(quant,val, op1,user))
+            connection.commit()
         else:
             valor = op2*preco
             cursor.execute("INSERT INTO compra (id, data, quantidade, finalizada, valor, cliente_utilizador_email, album_id)"
@@ -270,10 +263,8 @@ def remover_carrinho(user):
         cursor = connection.cursor()
         cursor.execute("SELECT id, preco FROM album;")
         album_id = []
-        preco = 0
         for linha in cursor.fetchall():
             album_id.append(str(linha[0]))
-            preco = linha[1]
         while True:
             op1 = input("Insira o ID do album que pretende remover: ")
             if op1 not in album_id:
@@ -290,6 +281,10 @@ def remover_carrinho(user):
             print("O album que pretende remover não se encontra no carrinho")
             menu.menu_carrinho(user)
 
+        cursor.execute("SELECT preco FROM album WHERE id = %s;",(op1,))
+        for linha in cursor.fetchall():
+            preco = linha[0]
+            
         cursor.execute("SELECT quantidade, valor FROM compra WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email = %s;", (op1,user))
         quant = 0
         val = 0
@@ -1912,4 +1907,3 @@ def pesquisa_album_historico(user,crit,ord):
         if(connection):
             cursor.close()
             connection.close()
-
