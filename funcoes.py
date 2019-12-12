@@ -20,9 +20,6 @@ def insere_novo_user(user_email, user_passwd, user_nome):
 
         cursor.execute(postgres_insert_query, record_to_insert)
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into utilizadores table")
 
     except (Exception, psycopg2.Error):
         if(connection):
@@ -581,9 +578,6 @@ def cria_album(a_nome, a_preco, a_nstock, a_data_edicao, a_editora):
         cursor.execute("INSERT INTO album VALUES (%s,nextval('album_id_sequence'),%s,true,%s,%s,%s,false);",(a_nome,a_preco,a_nstock,a_data_edicao,a_editora))
         
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into album table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -605,10 +599,6 @@ def cria_musica(musica):
         cursor.execute(
             "INSERT INTO musica VALUES (nextval('musica_id_sequence'),%s);", (musica,))
         connection.commit()
-
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into musica table")
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
@@ -632,10 +622,6 @@ def cria_editora(editora):
             "INSERT INTO editora VALUES (%s,nextval('editora_id_sequence'));", (editora,))
         connection.commit()
 
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into editora table")
-
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -658,10 +644,6 @@ def cria_artista(artista):
             "INSERT INTO artista VALUES (nextval('artista_id_sequence'),%s);", (artista,))
         connection.commit()
 
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into artista table")
-
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -683,9 +665,6 @@ def cria_genero(genero):
         cursor.execute(
             "INSERT INTO genero VALUES (nextval('genero_id_sequence'),%s);", (genero,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into genero table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -707,9 +686,6 @@ def insere_artista_album(id_album,id_artista):
         cursor.execute(
             "INSERT INTO artista_album VALUES (%s,%s);", (id_artista,id_album))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into artista_album table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -731,9 +707,6 @@ def insere_genero_album(id_album,id_genero):
         cursor.execute(
             "INSERT INTO genero_album VALUES (%s,%s);", (id_genero,id_album))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into genero_album table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -755,9 +728,6 @@ def insere_musica_album(id_album,id_musica):
         cursor.execute(
             "INSERT INTO musica_album VALUES (%s,%s);", (id_musica,id_album))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into musica_album table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -796,9 +766,6 @@ def update_quanitdade():
 
         cursor.execute("UPDATE album SET n_stock = %s + %s WHERE id =%s;",(stock_atual,aumento,id))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record updated successfully")
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
@@ -849,9 +816,6 @@ def insere_historico_preco(user,album_id,preco):
         cursor = connection.cursor()
         cursor.execute("INSERT INTO historico_preco VALUES (%s,now(),%s,%s,nextval('altera_id_sequence'));",(preco,user,album_id))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into historico_preco table")
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -892,16 +856,12 @@ def corrigir_preco(user):
                 break
         cursor.execute("UPDATE album SET preco = %s WHERE id =%s;",(novo_preco,id))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record updated successfully")
+
         insere_historico_preco(user,id,novo_preco)
 
         cursor.execute("UPDATE compra SET valor=quantidade*%s WHERE album_id = %s;",(novo_preco,id))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record updated successfully")
+
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -963,16 +923,15 @@ def remove_album():
         cursor = connection.cursor()
         id_album = []
         id_album_compra = []
-        cursor.execute("SELECT id FROM album WHERE em_stock = true AND comprado = false")
+        cursor.execute("SELECT id FROM album WHERE comprado = false") #verifica quais albuns ainda não foram comprados
         for linha in cursor.fetchall():
             id_album.append(linha[0])
-        print(id_album)
         
-        cursor.execute("SELECT DISTINCT album_id FROM compra")
+        cursor.execute("SELECT DISTINCT album_id FROM compra") #verifica quais albuns estão nos carrinhos das pessoas
         for linha in cursor.fetchall():
             id_album_compra.append(linha[0])
-        print(id_album_compra)
-        if id_album == id_album_compra:
+        
+        if id_album == id_album_compra or id_album == []: #se estiverem num carrinho ou já foram comprados então não podem ser removidos
             print("Não existem albuns que possam ser removidos!")
             return
         while True:
@@ -983,35 +942,19 @@ def remove_album():
                 break
         cursor.execute("DELETE FROM artista_album WHERE album_id = %s;",(id,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record deleted successfully")
 
         cursor.execute("DELETE FROM genero_album WHERE album_id = %s;",(id,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record deleted successfully")
 
         cursor.execute("DELETE FROM musica_album WHERE album_id = %s;",(id,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record deleted successfully")
 
         cursor.execute("DELETE FROM historico_preco WHERE album_id = %s;",(id,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record deleted successfully")
 
         cursor.execute("DELETE FROM album WHERE id = %s",(id,))
         connection.commit()
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record deleted successfully")
         
-
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
 
@@ -1056,11 +999,6 @@ def aumenta_saldo(user):
 
         cursor.execute("UPDATE cliente SET saldo = %s WHERE utilizador_email = %s;",(novo_saldo,email_input))
         connection.commit()
-
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record updated successfully")
-
 
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
@@ -1333,10 +1271,6 @@ def envia_mensagem():
                 break
         cursor.execute("INSERT INTO mensagem VALUES (nextval('mensagem_id_sequence'),%s,%s,now());",(texto,assunto))
         connection.commit()
-        
-        count = cursor.rowcount
-        # DEBUG
-        print(count, "Record inserted successfully into mensagens")
 
         clientes = []
         cursor.execute("SELECT utilizador_email FROM cliente")
@@ -1348,9 +1282,6 @@ def envia_mensagem():
         for i in clientes:
             cursor.execute("INSERT INTO leitura VALUES(false,%s,%s);",(id_mensagem[0],i))
             connection.commit()
-            count = cursor.rowcount
-            # DEBUG
-            print(count, "Record inserted successfully into leitura")
         
     except (Exception, psycopg2.Error) as error:
         print("Error ", error)
