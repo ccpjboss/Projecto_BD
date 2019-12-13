@@ -1851,8 +1851,8 @@ def pesquisa_album_historico(user,crit,ord):
             menu.menu_cliente(user)
         menu.menu_detalhes(user)
 
-    #except (Exception, psycopg2.Error) as error:
-        #print("Error ", error)
+    except (Exception, psycopg2.Error) as error:
+        print("Error ", error)
 
     finally:
         # closing database connection.
