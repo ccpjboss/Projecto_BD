@@ -198,6 +198,10 @@ def adicionar_carrinho(user):
 
         if stock == 0:
             print("De momento este album não se encontra em stock")
+            while True:
+                move_on = input("Enter para continuar")
+                if move_on == '':
+                    break
             menu.menu_carrinho(user)
 
         cursor.execute("SELECT n_stock, preco FROM album WHERE album.id = %s;",(op1,))
@@ -238,6 +242,10 @@ def adicionar_carrinho(user):
             connection.commit()
 
         print("Após esta operação o valor total do seu carrinho é: ", valor_total(user), "€")
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
         menu.menu_carrinho(user)
 
 
@@ -276,7 +284,12 @@ def remover_carrinho(user):
 
         if op1 not in album_id:
             print("O album que pretende remover não se encontra no carrinho")
+            while True:
+                move_on = input("Enter para continuar")
+                if move_on == '':
+                    break
             menu.menu_carrinho(user)
+
 
         cursor.execute("SELECT preco FROM album WHERE id = %s;",(op1,))
         for linha in cursor.fetchall():
@@ -304,6 +317,10 @@ def remover_carrinho(user):
         cursor.execute("UPDATE compra SET quantidade = %s, valor = %s WHERE album_id = %s AND finalizada = false AND cliente_utilizador_email = %s;",(quant,val,op1,user))
         connection.commit()
         print("Após esta operação o valor total do seu carrinho é: ", valor_total(user), "€")
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -342,6 +359,10 @@ def ver_carrinho(user):
             print("O seu carrinho está vazio")
         else:
             print("O valor total do seu carrinho é: ", valor_total(user),"€")
+        while True:
+            move_on = input("Enter para continuar")
+            if move_on == '':
+                break
         menu.menu_carrinho(user)
 
     except (Exception, psycopg2.Error) as error:
@@ -896,7 +917,7 @@ def ver_historico_preco():
             preco = linha[0]
             data = linha[1]
     
-            print("Preco: ",preco,"Data: \t",data)
+            print("Preco: ",preco,"Data: \t",data.strftime("%A, %d %B %Y %I:%M%p"))
         
         while True:
             move_on = input("Enter para continuar")
@@ -1034,8 +1055,8 @@ def historico_compra(user):
             print("Nome do album: ", album_nome)
             print("Quantidade: ", quant)
             print("Valor: ", valor)
-            print("Data em que foi adicionado ao carrinho: ", data)
-            print("Data em que foi comprado: ", data2)
+            print("Data em que foi adicionado ao carrinho: ", data.strftime("%A, %d %B %Y %I:%M%p"))
+            print("Data em que foi comprado: ", data2.strftime("%A, %d %B %Y %I:%M%p"))
             print("-------------------//-------------------------")
         total_preco_genero(user)
         
@@ -1314,7 +1335,7 @@ def mensagem_cliente(user):
             id_mensagens.append(linha[0])
             assunto = linha[1]
             data = linha[2]
-            print("ID: ",id,"Assunto: ",assunto,"Data: ",data)
+            print("ID: ",id,"Assunto: ",assunto,"Data: ",data.strftime("%A, %d %B %Y %I:%M%p"))
             print("----------------------------------------")
         print("1. \tLer mensagem")
         print("2. \tLidas")
@@ -1371,7 +1392,7 @@ def mensagens_n_lidas(user):
             id_mensagens.append(linha[0])
             assunto = linha[1]
             data = linha[2]
-            print("ID: ",id,"Assunto: ",assunto,"Data: ",data)
+            print("ID: ",id,"Assunto: ",assunto,"Data: ",data.strftime("%A, %d %B %Y %I:%M%p"))
             print("----------------------------------------")
 
         while True:
